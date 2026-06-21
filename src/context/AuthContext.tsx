@@ -7,15 +7,29 @@ import { doc, onSnapshot } from "firebase/firestore";
 
 export type Role = "academy" | "parent" | null;
 
+export interface UserProfile {
+  email?: string;
+  name?: string;
+  phone?: string;
+  role?: Role;
+  academyId?: string;
+  approved?: boolean;
+  rejected?: boolean;
+  joinCode?: string;
+  createdAt?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   role: Role;
+  profile: UserProfile | null;
   loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   role: null,
+  profile: null,
   loading: true,
 });
 
@@ -24,6 +38,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<Role>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,16 +65,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         unsubscribeDoc = onSnapshot(doc(db, "users", firebaseUser.uid), (docSnap) => {
           markResolved();
           if (docSnap.exists()) {
-            setRole(docSnap.data().role as Role);
+            const data = docSnap.data() as UserProfile;
+            setRole((data.role as Role) ?? null);
+            setProfile(data);
           } else {
             // Document might not be created yet during sign up, so we wait
             setRole(null);
+            setProfile(null);
           }
           setLoading(false);
         }, (error) => {
-          console.error("Error fetching user role:", error);
+          console.error("Error fetching role:", error);
           markResolved();
           setRole(null);
+          setProfile(null);
           setLoading(false);
         });
 
@@ -67,6 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         markResolved();
         setUser(null);
         setRole(null);
+        setProfile(null);
         setLoading(false);
         if (unsubscribeDoc) {
           unsubscribeDoc();
@@ -78,6 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       markResolved();
       setUser(null);
       setRole(null);
+      setProfile(null);
       setLoading(false);
     });
 
@@ -89,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, loading }}>
+    <AuthContext.Provider value={{ user, role, profile, loading }}>
       {children}
     </AuthContext.Provider>
   );

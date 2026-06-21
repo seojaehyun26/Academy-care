@@ -9,7 +9,8 @@ import { signOut } from "firebase/auth";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
-  PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus
+  PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
+  Clock, XCircle
 } from "lucide-react";
 
 interface Student {
@@ -38,7 +39,7 @@ interface Announcement {
 }
 
 export default function ParentDashboard() {
-  const { user, role, loading } = useAuth();
+  const { user, role, profile, loading } = useAuth();
   const router = useRouter();
 
   const [students, setStudents] = useState<Student[]>([]);
@@ -156,10 +157,12 @@ export default function ParentDashboard() {
     } catch (e) { console.error(e); }
   };
 
-  // Academies the parent already has at least one child registered at,
-  // derived from existing students — used to attach a new child without
-  // needing a separate academy join-code flow.
-  const childAcademyIds = Array.from(new Set(students.map(s => s.academyId)));
+  // Academies a new child can be attached to: primarily the academy this
+  // parent joined via code, plus any academy already seen on an existing
+  // child (covers parents created before the join-code system existed).
+  const childAcademyIds = Array.from(new Set(
+    [profile?.academyId, ...students.map(s => s.academyId)].filter((id): id is string => !!id)
+  ));
   const academyLabel = (academyId: string) => {
     const sibling = students.find(s => s.academyId === academyId);
     return sibling ? `${sibling.name} 학생과 같은 학원` : "등록된 학원";
@@ -196,6 +199,46 @@ export default function ParentDashboard() {
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Parents created before this approval system existed have no `approved`
+  // field at all — treat that as already approved so we don't lock out
+  // existing users. Only an explicit `approved: false` blocks access.
+  const isRejected = profile?.rejected === true;
+  const isApproved = profile?.approved !== false;
+
+  if (isRejected) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
+        <div style={{ textAlign: 'center', maxWidth: 360, padding: 24 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #800020, #5A0016)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <XCircle size={28} color="white" />
+          </div>
+          <p style={{ fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>가입이 거절되었습니다</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 20 }}>학원 코드를 다시 확인하시거나 원장님께 문의해주세요.</p>
+          <button className="btn btn-secondary" style={{ justifyContent: 'center' }} onClick={() => signOut(auth)}>
+            <LogOut size={14} /> 로그아웃
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isApproved) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
+        <div style={{ textAlign: 'center', maxWidth: 360, padding: 24 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #800020, #5A0016)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <Clock size={28} color="white" />
+          </div>
+          <p style={{ fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>원장님 승인 대기 중입니다</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 20 }}>승인이 완료되면 자동으로 이용할 수 있어요.</p>
+          <button className="btn btn-secondary" style={{ justifyContent: 'center' }} onClick={() => signOut(auth)}>
+            <LogOut size={14} /> 로그아웃
+          </button>
         </div>
       </div>
     );
@@ -301,7 +344,7 @@ export default function ParentDashboard() {
           {/* Status Tab */}
           {activeTab === "status" && (
             <div className="animate-fade-up">
-              {students.length > 0 && (
+              {childAcademyIds.length > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
                   <button className="btn btn-secondary btn-sm" onClick={openAddChildModal}>
                     <UserPlus size={14} /> 자녀 추가
@@ -340,9 +383,17 @@ export default function ParentDashboard() {
                   <div className="card empty-state">
                     <div className="empty-state-icon">👦</div>
                     등록된 자녀가 없습니다.
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>
-                      첫 자녀 등록은 원장님께 요청해주세요. 등록 후에는 이 화면에서 자녀를 추가할 수 있습니다.
-                    </div>
+                    {childAcademyIds.length > 0 ? (
+                      <div style={{ marginTop: 10 }}>
+                        <button className="btn btn-primary btn-sm" onClick={openAddChildModal}>
+                          <UserPlus size={14} /> 자녀 추가하기
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>
+                        원장님께 첫 자녀 등록을 요청해주세요.
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

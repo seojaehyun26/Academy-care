@@ -4,19 +4,22 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
-import { GraduationCap, Mail, Lock, User, ShieldCheck, BookOpen, Users, Bell, Phone } from "lucide-react";
+import { doc, getDoc, setDoc, writeBatch } from "firebase/firestore";
+import { generateUniqueAcademyCode } from "@/lib/academyCode";
+import { GraduationCap, Mail, Lock, User, ShieldCheck, BookOpen, Users, Bell, Phone, KeyRound } from "lucide-react";
 
 export default function Home() {
   const { user, role, loading } = useAuth();
-  
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [academyCode, setAcademyCode] = useState("");
   const [selectedRole, setSelectedRole] = useState<"academy" | "parent">("parent");
   const [errorMsg, setErrorMsg] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -28,19 +31,62 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
-    try {
-      if (isLogin) {
+
+    if (isLogin) {
+      try {
         await signInWithEmailAndPassword(auth, email, password);
+      } catch {
+        setErrorMsg("이메일 또는 비밀번호를 다시 확인해주세요.");
+      }
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      let matchedAcademyId = "";
+      if (selectedRole === "parent") {
+        const code = academyCode.trim().toUpperCase();
+        if (!code) {
+          setErrorMsg("학원 코드를 입력해주세요.");
+          setSubmitting(false);
+          return;
+        }
+        const codeSnap = await getDoc(doc(db, "academyCodes", code));
+        if (!codeSnap.exists()) {
+          setErrorMsg("유효하지 않은 학원 코드입니다. 원장님께 코드를 다시 확인해주세요.");
+          setSubmitting(false);
+          return;
+        }
+        matchedAcademyId = codeSnap.data().academyId as string;
+      }
+
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+
+      if (selectedRole === "academy") {
+        const joinCode = await generateUniqueAcademyCode();
+        // Batched so both docs commit atomically — the redirect effect below
+        // fires as soon as the users doc is observed, as a hard navigation
+        // (window.location.href) that would otherwise be able to abort a
+        // still-in-flight second write.
+        const batch = writeBatch(db);
+        batch.set(doc(db, "users", cred.user.uid), {
+          email, name, role: "academy", joinCode,
+          createdAt: new Date().toISOString()
+        });
+        batch.set(doc(db, "academyCodes", joinCode), { academyId: cred.user.uid });
+        await batch.commit();
       } else {
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
         await setDoc(doc(db, "users", cred.user.uid), {
-          email, name, role: selectedRole,
-          ...(selectedRole === "parent" && phone ? { phone } : {}),
+          email, name, role: "parent",
+          academyId: matchedAcademyId, approved: false, rejected: false,
+          ...(phone ? { phone } : {}),
           createdAt: new Date().toISOString()
         });
       }
     } catch {
       setErrorMsg("이메일 또는 비밀번호를 다시 확인해주세요.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -137,16 +183,31 @@ export default function Home() {
                     </select>
                   </div>
                   {selectedRole === "parent" && (
-                    <div className="login-field">
-                      <div className="login-field-icon"><Phone size={16} /></div>
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={e => setPhone(e.target.value)}
-                        placeholder="전화번호 (예: 010-1234-5678)"
-                        className="login-input"
-                      />
-                    </div>
+                    <>
+                      <div className="login-field">
+                        <div className="login-field-icon"><KeyRound size={16} /></div>
+                        <input
+                          type="text"
+                          value={academyCode}
+                          onChange={e => setAcademyCode(e.target.value.toUpperCase())}
+                          required
+                          placeholder="학원 코드 (원장님께 문의)"
+                          className="login-input"
+                          style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                          maxLength={6}
+                        />
+                      </div>
+                      <div className="login-field">
+                        <div className="login-field-icon"><Phone size={16} /></div>
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={e => setPhone(e.target.value)}
+                          placeholder="전화번호 (예: 010-1234-5678)"
+                          className="login-input"
+                        />
+                      </div>
+                    </>
                   )}
                 </>
               )}
@@ -174,8 +235,8 @@ export default function Home() {
               </div>
             </div>
 
-            <button type="submit" className="login-btn">
-              {isLogin ? "로그인" : "가입하기"}
+            <button type="submit" className="login-btn" disabled={submitting}>
+              {submitting ? "처리 중..." : (isLogin ? "로그인" : "가입하기")}
             </button>
           </form>
 

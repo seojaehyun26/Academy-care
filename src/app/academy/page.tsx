@@ -4,12 +4,14 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { collection, addDoc, query, onSnapshot, updateDoc, doc, where, setDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, onSnapshot, updateDoc, doc, where, setDoc, getDocs, writeBatch } from "firebase/firestore";
 import { signOut } from "firebase/auth";
+import { generateUniqueAcademyCode } from "@/lib/academyCode";
 import {
   Search, Users, CheckCircle, XCircle, LogOut, MessageCircle, BookOpen, Plus,
   Clock, UserCheck, CircleDashed, X, Trash2, Calendar as CalendarIcon, Megaphone,
-  CalendarCheck, User, Book, FileText, Library, GraduationCap, Phone, Mail
+  CalendarCheck, User, Book, FileText, Library, GraduationCap, Phone, Mail,
+  ShieldCheck, KeyRound, Copy
 } from "lucide-react";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 
@@ -53,8 +55,17 @@ interface ParentInfo {
   students: string[]; // student names
 }
 
+interface LinkedParent {
+  id: string;
+  name?: string;
+  email: string;
+  phone?: string;
+  approved?: boolean;
+  rejected?: boolean;
+}
+
 export default function AcademyDashboard() {
-  const { user, role, loading } = useAuth();
+  const { user, role, profile, loading } = useAuth();
   const router = useRouter();
 
   const [students, setStudents] = useState<Student[]>([]);
@@ -74,11 +85,29 @@ export default function AcademyDashboard() {
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [parents, setParents] = useState<ParentInfo[]>([]);
   const [parentSearch, setParentSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<"students" | "parents" | "homework" | "announcements" | "consultations">("students");
+  const [linkedParents, setLinkedParents] = useState<LinkedParent[]>([]);
+  const [codeCopied, setCodeCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<"students" | "parents" | "homework" | "announcements" | "consultations" | "approvals">("students");
 
   useEffect(() => {
     if (!loading && (!user || role !== "academy")) router.push("/");
   }, [user, role, loading, router]);
+
+  // Academies created before the join-code system existed don't have a
+  // joinCode yet — generate one lazily the first time their dashboard loads.
+  useEffect(() => {
+    if (user && role === "academy" && profile && !profile.joinCode) {
+      (async () => {
+        try {
+          const code = await generateUniqueAcademyCode();
+          const batch = writeBatch(db);
+          batch.set(doc(db, "academyCodes", code), { academyId: user.uid });
+          batch.set(doc(db, "users", user.uid), { joinCode: code }, { merge: true });
+          await batch.commit();
+        } catch (e) { console.error(e); }
+      })();
+    }
+  }, [user, role, profile]);
 
   useEffect(() => {
     if (user && role === "academy") {
@@ -99,6 +128,10 @@ export default function AcademyDashboard() {
       const unsubCons = onSnapshot(cq, snap => {
         const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Consultation));
         setConsultations(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      });
+      const lpq = query(collection(db, "users"), where("academyId", "==", user.uid));
+      const unsubLinkedParents = onSnapshot(lpq, snap => {
+        setLinkedParents(snap.docs.map(d => ({ id: d.id, ...d.data() } as LinkedParent)));
       });
 
       // Fetch parent info from users collection
@@ -132,7 +165,7 @@ export default function AcademyDashboard() {
       };
       fetchParents();
 
-      return () => { unsubStudents(); unsubSettings(); unsubAnn(); unsubCons(); };
+      return () => { unsubStudents(); unsubSettings(); unsubAnn(); unsubCons(); unsubLinkedParents(); };
     }
   }, [user, role]);
 
@@ -224,6 +257,27 @@ export default function AcademyDashboard() {
     catch (e) { console.error(e); }
   };
 
+  const pendingParents = linkedParents.filter(p => !p.approved && !p.rejected);
+
+  const approveParent = async (parentId: string) => {
+    try { await updateDoc(doc(db, "users", parentId), { approved: true, rejected: false }); }
+    catch (e) { console.error(e); }
+  };
+
+  const rejectParent = async (parentId: string) => {
+    try { await updateDoc(doc(db, "users", parentId), { approved: false, rejected: true }); }
+    catch (e) { console.error(e); }
+  };
+
+  const copyJoinCode = async () => {
+    if (!profile?.joinCode) return;
+    try {
+      await navigator.clipboard.writeText(profile.joinCode);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 1500);
+    } catch (e) { console.error(e); }
+  };
+
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
     return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
@@ -255,6 +309,7 @@ export default function AcademyDashboard() {
     { id: "homework", label: "과제·교재", icon: <BookOpen size={17} />, mobileIcon: <BookOpen size={20} /> },
     { id: "announcements", label: "공지사항", icon: <Megaphone size={17} />, mobileIcon: <Megaphone size={20} /> },
     { id: "consultations", label: "상담 신청", icon: <CalendarCheck size={17} />, mobileIcon: <CalendarCheck size={20} />, badge: pendingConsults },
+    { id: "approvals", label: "가입 승인", icon: <ShieldCheck size={17} />, mobileIcon: <ShieldCheck size={20} />, badge: pendingParents.length },
   ];
 
   const filteredParents = parents.filter(p =>
@@ -735,6 +790,73 @@ export default function AcademyDashboard() {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Approvals Tab */}
+          {activeTab === "approvals" && (
+            <div className="two-col-grid animate-fade-up">
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="card-header">
+                  <div>
+                    <div className="card-title"><KeyRound size={15} /> 학원 코드</div>
+                    <div className="card-subtitle">학부모 가입 시 이 코드를 입력하면 우리 학원과 연동됩니다</div>
+                  </div>
+                </div>
+                <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ flex: 1, padding: '14px 18px', borderRadius: 12, background: 'var(--bg)', border: '1.5px dashed var(--border-strong)', fontSize: 26, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
+                      {profile?.joinCode || '생성 중...'}
+                    </div>
+                    <button className="btn btn-secondary" onClick={copyJoinCode} disabled={!profile?.joinCode}>
+                      <Copy size={14} /> {codeCopied ? '복사됨!' : '복사'}
+                    </button>
+                  </div>
+                  <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                    이 코드를 학부모에게 전달해주세요. 학부모가 가입 시 코드를 입력하면 아래 목록에 가입 신청이 도착합니다.
+                  </p>
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="card-header">
+                  <div>
+                    <div className="card-title"><ShieldCheck size={15} /> 가입 승인 대기</div>
+                    <div className="card-subtitle">코드를 입력하고 가입한 학부모를 승인해주세요</div>
+                  </div>
+                  {pendingParents.length > 0 && (
+                    <span className="badge badge-error">{pendingParents.length}건 대기중</span>
+                  )}
+                </div>
+                <div className="card-body">
+                  {pendingParents.length === 0 ? (
+                    <div className="empty-state">대기 중인 가입 신청이 없습니다.</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {pendingParents.map(p => (
+                        <div key={p.id} className="student-row">
+                          <div className="student-row-info">
+                            <div className="student-row-name">{p.name || p.email}</div>
+                            <div className="student-row-meta">
+                              <Mail size={11} />
+                              {p.email}
+                              {p.phone && <><span>·</span><Phone size={11} />{p.phone}</>}
+                            </div>
+                          </div>
+                          <div className="student-row-actions">
+                            <button className="btn btn-primary btn-sm" onClick={() => approveParent(p.id)}>
+                              <CheckCircle size={14} /> 승인
+                            </button>
+                            <button className="btn btn-ghost btn-sm" onClick={() => rejectParent(p.id)}>
+                              <XCircle size={14} /> 거절
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
