@@ -814,7 +814,7 @@ export default function AcademyDashboard() {
                     </button>
                   </div>
                   <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                    이 코드를 학부모에게 전달해주세요. 학부모가 가입 시 코드를 입력하면 아래 목록에 가입 신청이 도착합니다.
+                    이 코드를 문자, 카카오톡 등으로 학부모님께 전달해주세요. 학부모가 가입 시 코드를 입력하면 우리 학원과 자동으로 연동되지만, 아래 목록에서 직접 승인하기 전까지는 학부모가 앱을 사용할 수 없습니다.
                   </p>
                 </div>
               </div>
