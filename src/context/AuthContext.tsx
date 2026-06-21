@@ -43,27 +43,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let unsubscribeDoc: (() => void) | null = null;
-    let resolved = false;
-    const markResolved = () => { resolved = true; };
-
-    // Safety net: if auth/Firestore never calls back (e.g. a network or
-    // proxy silently drops the realtime listener), don't leave the user
-    // stuck on the loading screen forever.
-    const safetyTimer = setTimeout(() => {
-      if (!resolved) {
-        markResolved();
-        console.warn("Auth/role lookup timed out; unblocking loading screen.");
-        setLoading(false);
-      }
-    }, 8000);
 
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
+      // A new auth transition is starting (e.g. sign-up/sign-in happening
+      // without a full page reload) — drop any listener from the previous
+      // transition so it can't race with this one.
+      if (unsubscribeDoc) {
+        unsubscribeDoc();
+        unsubscribeDoc = null;
+      }
+
       if (firebaseUser) {
         setUser(firebaseUser);
+        // `loading` may already be false from an earlier resolution within
+        // this same page load (e.g. the near-instant "not logged in" check
+        // on initial mount, before the user submits sign-up/sign-in). Without
+        // this, the role lookup below would happen silently — the page
+        // would render its signed-out form for a few seconds with no
+        // indication anything is happening, which looks like the screen
+        // simply isn't responding to the submit.
+        setLoading(true);
+
+        // Safety net per transition: if Firestore never calls back (e.g. a
+        // network or proxy silently drops the realtime listener), don't
+        // leave the user stuck on the current screen forever. This must be
+        // re-armed for every transition, not just the first — sign-up and
+        // sign-in both trigger a fresh transition within the same page
+        // load, well after the initial (near-instant, "logged out") one
+        // that a mount-only timer would have already consumed.
+        let resolved = false;
+        const safetyTimer = setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            console.warn("Role lookup timed out; unblocking loading screen.");
+            setLoading(false);
+          }
+        }, 8000);
 
         // Listen to the user's document in real-time
         unsubscribeDoc = onSnapshot(doc(db, "users", firebaseUser.uid), (docSnap) => {
-          markResolved();
+          resolved = true;
+          clearTimeout(safetyTimer);
           if (docSnap.exists()) {
             const data = docSnap.data() as UserProfile;
             setRole((data.role as Role) ?? null);
@@ -76,26 +96,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setLoading(false);
         }, (error) => {
           console.error("Error fetching role:", error);
-          markResolved();
+          resolved = true;
+          clearTimeout(safetyTimer);
           setRole(null);
           setProfile(null);
           setLoading(false);
         });
 
       } else {
-        markResolved();
         setUser(null);
         setRole(null);
         setProfile(null);
         setLoading(false);
-        if (unsubscribeDoc) {
-          unsubscribeDoc();
-          unsubscribeDoc = null;
-        }
       }
     }, (error) => {
       console.error("Auth state error:", error);
-      markResolved();
       setUser(null);
       setRole(null);
       setProfile(null);
@@ -103,7 +118,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => {
-      clearTimeout(safetyTimer);
       unsubscribeAuth();
       if (unsubscribeDoc) unsubscribeDoc();
     };

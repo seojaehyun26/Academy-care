@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
@@ -10,6 +11,7 @@ import { GraduationCap, Mail, Lock, User, ShieldCheck, BookOpen, Users, Bell, Ph
 
 export default function Home() {
   const { user, role, loading } = useAuth();
+  const router = useRouter();
 
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
@@ -23,10 +25,16 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && user) {
-      if (role === "academy") window.location.href = "/academy";
-      else if (role === "parent") window.location.href = "/parent";
+      // Client-side navigation (not a hard reload): a full document reload
+      // here would tear down the Firestore SDK's pending-write queue along
+      // with it. On a slow connection, a write that just succeeded locally
+      // (and is still being flushed to the server in the background) could
+      // get abandoned mid-flight, silently losing the new account/profile
+      // and bouncing the user back to this form with no explanation.
+      if (role === "academy") router.push("/academy");
+      else if (role === "parent") router.push("/parent");
     }
-  }, [user, role, loading]);
+  }, [user, role, loading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,10 +72,7 @@ export default function Home() {
 
       if (selectedRole === "academy") {
         const joinCode = await generateUniqueAcademyCode();
-        // Batched so both docs commit atomically — the redirect effect below
-        // fires as soon as the users doc is observed, as a hard navigation
-        // (window.location.href) that would otherwise be able to abort a
-        // still-in-flight second write.
+        // Batched so both docs commit atomically.
         const batch = writeBatch(db);
         batch.set(doc(db, "users", cred.user.uid), {
           email, name, role: "academy", joinCode,
@@ -83,6 +88,8 @@ export default function Home() {
           createdAt: new Date().toISOString()
         });
       }
+      // Navigation to the dashboard happens via the role-watching effect
+      // above once AuthContext picks up the new profile.
     } catch {
       setErrorMsg("이메일 또는 비밀번호를 다시 확인해주세요.");
     } finally {
