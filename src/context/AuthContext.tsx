@@ -28,27 +28,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let unsubscribeDoc: (() => void) | null = null;
+    let resolved = false;
+    const markResolved = () => { resolved = true; };
+
+    // Safety net: if auth/Firestore never calls back (e.g. a network or
+    // proxy silently drops the realtime listener), don't leave the user
+    // stuck on the loading screen forever.
+    const safetyTimer = setTimeout(() => {
+      if (!resolved) {
+        markResolved();
+        console.warn("Auth/role lookup timed out; unblocking loading screen.");
+        setLoading(false);
+      }
+    }, 8000);
 
     const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
-        
+
         // Listen to the user's document in real-time
         unsubscribeDoc = onSnapshot(doc(db, "users", firebaseUser.uid), (docSnap) => {
+          markResolved();
           if (docSnap.exists()) {
             setRole(docSnap.data().role as Role);
           } else {
             // Document might not be created yet during sign up, so we wait
-            setRole(null); 
+            setRole(null);
           }
           setLoading(false);
         }, (error) => {
           console.error("Error fetching user role:", error);
+          markResolved();
           setRole(null);
           setLoading(false);
         });
 
       } else {
+        markResolved();
         setUser(null);
         setRole(null);
         setLoading(false);
@@ -57,9 +73,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           unsubscribeDoc = null;
         }
       }
+    }, (error) => {
+      console.error("Auth state error:", error);
+      markResolved();
+      setUser(null);
+      setRole(null);
+      setLoading(false);
     });
 
     return () => {
+      clearTimeout(safetyTimer);
       unsubscribeAuth();
       if (unsubscribeDoc) unsubscribeDoc();
     };

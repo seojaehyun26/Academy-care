@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,4 +15,15 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// Some networks (proxies/firewalls) silently break Firestore's streaming
+// transport, leaving onSnapshot listeners hanging forever. Auto-detecting
+// long-polling avoids that class of hang. Wrapped in try/catch because
+// initializeFirestore can only run once per app (dev HMR re-runs this file).
+let firestoreDb;
+try {
+  firestoreDb = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
+} catch {
+  firestoreDb = getFirestore(app);
+}
+export const db = firestoreDb;
