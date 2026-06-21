@@ -224,6 +224,9 @@ export default function ParentDashboard() {
             <button className="mobile-topbar-btn" onClick={() => setIsConsultModalOpen(true)} title="상담 신청">
               <PhoneCall size={16} />
             </button>
+            <button className="mobile-topbar-btn" onClick={() => router.push("/chat")} title="AI 채팅">
+              <MessageCircle size={16} />
+            </button>
             <button className="mobile-topbar-btn" onClick={() => signOut(auth)} title="로그아웃">
               <LogOut size={16} />
             </button>
