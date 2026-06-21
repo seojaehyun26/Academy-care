@@ -197,6 +197,9 @@ export default function Home() {
                           maxLength={6}
                         />
                       </div>
+                      <p style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6, margin: '-6px 2px 0' }}>
+                        자녀가 다니는 학원의 원장님께 받은 6자리 코드를 입력하세요. 가입 후 원장님이 승인하면 이용할 수 있습니다.
+                      </p>
                       <div className="login-field">
                         <div className="login-field-icon"><Phone size={16} /></div>
                         <input
