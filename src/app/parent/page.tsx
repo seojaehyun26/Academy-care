@@ -46,6 +46,7 @@ export default function ParentDashboard() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const prevStatuses = useRef<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"status" | "homework" | "announcements" | "calendar">("status");
+  const [lastSeenAnnouncementsAt, setLastSeenAnnouncementsAt] = useState("");
 
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
   const [isFeeModalOpen, setIsFeeModalOpen] = useState(false);
@@ -56,6 +57,25 @@ export default function ParentDashboard() {
   useEffect(() => {
     if (!loading && (!user || role !== "parent")) router.push("/");
   }, [user, role, loading, router]);
+
+  useEffect(() => {
+    if (user) {
+      setLastSeenAnnouncementsAt(localStorage.getItem(`announcementsLastSeen_${user.uid}`) || "");
+    }
+  }, [user]);
+
+  const unreadAnnouncements = announcements.filter(
+    a => !lastSeenAnnouncementsAt || new Date(a.date).getTime() > new Date(lastSeenAnnouncementsAt).getTime()
+  ).length;
+
+  const selectTab = (id: "status" | "homework" | "announcements" | "calendar") => {
+    setActiveTab(id);
+    if (id === "announcements" && user) {
+      const now = new Date().toISOString();
+      localStorage.setItem(`announcementsLastSeen_${user.uid}`, now);
+      setLastSeenAnnouncementsAt(now);
+    }
+  };
 
   useEffect(() => {
     if (user && role === "parent" && user.email) {
@@ -148,7 +168,7 @@ export default function ParentDashboard() {
   const navItems = [
     { id: "status", label: "실시간 출결", icon: <CircleDashed size={17} />, mobileIcon: <CircleDashed size={20} /> },
     { id: "homework", label: "숙제 알림", icon: <ClipboardList size={17} />, mobileIcon: <ClipboardList size={20} /> },
-    { id: "announcements", label: "공지사항", icon: <Bell size={17} />, mobileIcon: <Bell size={20} />, badge: announcements.length },
+    { id: "announcements", label: "공지사항", icon: <Bell size={17} />, mobileIcon: <Bell size={20} />, badge: unreadAnnouncements },
     { id: "calendar", label: "출결 달력", icon: <CalendarPlus size={17} />, mobileIcon: <CalendarPlus size={20} /> },
   ];
 
@@ -172,7 +192,7 @@ export default function ParentDashboard() {
             <button
               key={item.id}
               className={`sidebar-item ${activeTab === item.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(item.id as typeof activeTab)}
+              onClick={() => selectTab(item.id as typeof activeTab)}
             >
               {item.icon}
               <span style={{ flex: 1 }}>{item.label}</span>
@@ -186,7 +206,7 @@ export default function ParentDashboard() {
             <CreditCard size={17} /> 원비 납부 확인
           </button>
           <button className="sidebar-item" onClick={() => router.push("/chat")}>
-            <MessageCircle size={17} /> AI 채팅
+            <MessageCircle size={17} /> 학원과 채팅
           </button>
         </nav>
 
@@ -441,7 +461,7 @@ export default function ParentDashboard() {
             <button
               key={item.id}
               className={`bottom-tab-item ${activeTab === item.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(item.id as typeof activeTab)}
+              onClick={() => selectTab(item.id as typeof activeTab)}
             >
               {item.badge ? (
                 <span className="bottom-tab-badge">{item.badge > 9 ? '9+' : item.badge}</span>
@@ -456,7 +476,7 @@ export default function ParentDashboard() {
             <div className="bottom-tab-icon" style={{ color: 'var(--text-muted)' }}>
               <MessageCircle size={20} />
             </div>
-            <span className="bottom-tab-label">AI 채팅</span>
+            <span className="bottom-tab-label">학원과 채팅</span>
           </button>
         </div>
       </div>

@@ -297,7 +297,7 @@ export default function AcademyDashboard() {
           <div className="sidebar-section-label" style={{ marginTop: 8 }}>도구</div>
           <button className="sidebar-item" onClick={() => router.push("/chat")}>
             <MessageCircle size={17} />
-            AI 채팅
+            학부모와 채팅
           </button>
         </nav>
 
@@ -784,7 +784,7 @@ export default function AcademyDashboard() {
             <div className="bottom-tab-icon" style={{ color: 'var(--text-muted)' }}>
               <MessageCircle size={20} />
             </div>
-            <span className="bottom-tab-label">AI 채팅</span>
+            <span className="bottom-tab-label">학부모와 채팅</span>
           </button>
         </div>
       </div>
