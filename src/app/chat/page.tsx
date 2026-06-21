@@ -133,12 +133,18 @@ export default function ChatPage() {
           };
           setRooms([room]);
           setSelectedRoom(room);
-          if (isMobileView) setShowRoomList(false);
         }
       }
     };
     setup();
   }, [user, role]);
+
+  // isMobileView is detected in a separate effect, so it can still be
+  // false (its initial value) at the moment the room above gets selected.
+  // React this to either value changing, not just to room selection.
+  useEffect(() => {
+    if (selectedRoom && isMobileView) setShowRoomList(false);
+  }, [selectedRoom, isMobileView]);
 
   useEffect(() => {
     if (!selectedRoom) return;

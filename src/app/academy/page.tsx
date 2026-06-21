@@ -906,7 +906,7 @@ export default function AcademyDashboard() {
             <div className="bottom-tab-icon" style={{ color: 'var(--text-muted)' }}>
               <MessageCircle size={20} />
             </div>
-            <span className="bottom-tab-label">학부모와 채팅</span>
+            <span className="bottom-tab-label">채팅</span>
           </button>
         </div>
       </div>

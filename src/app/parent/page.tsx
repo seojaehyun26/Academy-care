@@ -320,6 +320,9 @@ export default function ParentDashboard() {
             <span className="mobile-topbar-name">Academy Care</span>
           </div>
           <div className="mobile-topbar-actions">
+            <button className="mobile-topbar-btn" onClick={() => setIsFeeModalOpen(true)} title="원비 납부 확인">
+              <CreditCard size={16} />
+            </button>
             <button className="mobile-topbar-btn" onClick={() => setIsConsultModalOpen(true)} title="상담 신청">
               <PhoneCall size={16} />
             </button>
@@ -616,7 +619,7 @@ export default function ParentDashboard() {
             <div className="bottom-tab-icon" style={{ color: 'var(--text-muted)' }}>
               <MessageCircle size={20} />
             </div>
-            <span className="bottom-tab-label">학원과 채팅</span>
+            <span className="bottom-tab-label">채팅</span>
           </button>
         </div>
       </div>
