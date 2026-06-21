@@ -9,7 +9,7 @@ import { signOut } from "firebase/auth";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
-  PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList
+  PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus
 } from "lucide-react";
 
 interface Student {
@@ -53,6 +53,10 @@ export default function ParentDashboard() {
   const [consultStudentId, setConsultStudentId] = useState("");
   const [consultDate, setConsultDate] = useState("");
   const [consultTime, setConsultTime] = useState("");
+
+  const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
+  const [newChildName, setNewChildName] = useState("");
+  const [newChildAcademyId, setNewChildAcademyId] = useState("");
 
   useEffect(() => {
     if (!loading && (!user || role !== "parent")) router.push("/");
@@ -149,6 +153,38 @@ export default function ParentDashboard() {
       setIsConsultModalOpen(false);
       setConsultStudentId(""); setConsultDate(""); setConsultTime("");
       alert("상담 신청이 완료되었습니다. 원장님 확인 후 연락드리겠습니다.");
+    } catch (e) { console.error(e); }
+  };
+
+  // Academies the parent already has at least one child registered at,
+  // derived from existing students — used to attach a new child without
+  // needing a separate academy join-code flow.
+  const childAcademyIds = Array.from(new Set(students.map(s => s.academyId)));
+  const academyLabel = (academyId: string) => {
+    const sibling = students.find(s => s.academyId === academyId);
+    return sibling ? `${sibling.name} 학생과 같은 학원` : "등록된 학원";
+  };
+
+  const openAddChildModal = () => {
+    setNewChildAcademyId(childAcademyIds[0] || "");
+    setIsAddChildModalOpen(true);
+  };
+
+  const submitAddChild = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const academyId = newChildAcademyId || childAcademyIds[0];
+    if (!newChildName.trim() || !academyId || !user?.email) return;
+    try {
+      await addDoc(collection(db, "students"), {
+        academyId,
+        name: newChildName.trim(),
+        parentEmail: user.email,
+        status: "none",
+        feeStatus: "unpaid",
+        lastUpdated: new Date().toISOString()
+      });
+      setIsAddChildModalOpen(false);
+      setNewChildName("");
     } catch (e) { console.error(e); }
   };
 
@@ -265,6 +301,13 @@ export default function ParentDashboard() {
           {/* Status Tab */}
           {activeTab === "status" && (
             <div className="animate-fade-up">
+              {students.length > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
+                  <button className="btn btn-secondary btn-sm" onClick={openAddChildModal}>
+                    <UserPlus size={14} /> 자녀 추가
+                  </button>
+                </div>
+              )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {students.map(student => (
                   <div key={student.id} className="card" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
@@ -297,6 +340,9 @@ export default function ParentDashboard() {
                   <div className="card empty-state">
                     <div className="empty-state-icon">👦</div>
                     등록된 자녀가 없습니다.
+                    <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>
+                      첫 자녀 등록은 원장님께 요청해주세요. 등록 후에는 이 화면에서 자녀를 추가할 수 있습니다.
+                    </div>
                   </div>
                 )}
               </div>
@@ -414,6 +460,49 @@ export default function ParentDashboard() {
               <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                 <button type="button" className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsConsultModalOpen(false)}>취소</button>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }}>신청하기</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Child Modal */}
+      {isAddChildModalOpen && (
+        <div className="modal-backdrop" onClick={() => setIsAddChildModalOpen(false)}>
+          <div className="modal-box" style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-icon" style={{ background: 'var(--brand-light)' }}>
+                <UserPlus size={22} color="var(--brand)" />
+              </div>
+              <div className="modal-title">자녀 추가 등록</div>
+            </div>
+            <form onSubmit={submitAddChild} style={{ padding: '0 20px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="input-group">
+                <label className="input-label">자녀 이름</label>
+                <input
+                  className="input"
+                  value={newChildName}
+                  onChange={e => setNewChildName(e.target.value)}
+                  required
+                  placeholder="자녀의 이름을 입력하세요"
+                />
+              </div>
+              {childAcademyIds.length > 1 && (
+                <div className="input-group">
+                  <label className="input-label">등록할 학원</label>
+                  <select className="input" value={newChildAcademyId} onChange={e => setNewChildAcademyId(e.target.value)} required>
+                    {childAcademyIds.map(id => (
+                      <option key={id} value={id}>{academyLabel(id)}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+                추가 등록 후 원장님이 출결·과제 관리를 시작할 수 있습니다.
+              </p>
+              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                <button type="button" className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsAddChildModalOpen(false)}>취소</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }}>추가하기</button>
               </div>
             </form>
           </div>
