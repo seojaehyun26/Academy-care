@@ -332,9 +332,6 @@ export default function AcademyDashboard() {
             <span className="mobile-topbar-name">Academy Care</span>
           </div>
           <div className="mobile-topbar-actions">
-            <button className="mobile-topbar-btn" onClick={() => router.push("/chat")} title="채팅">
-              <MessageCircle size={16} />
-            </button>
             <button className="mobile-topbar-btn" onClick={() => signOut(auth)} title="로그아웃">
               <LogOut size={16} />
             </button>
@@ -783,6 +780,12 @@ export default function AcademyDashboard() {
               <span className="bottom-tab-label">{item.label}</span>
             </button>
           ))}
+          <button className="bottom-tab-item" onClick={() => router.push("/chat")}>
+            <div className="bottom-tab-icon" style={{ color: 'var(--text-muted)' }}>
+              <MessageCircle size={20} />
+            </div>
+            <span className="bottom-tab-label">AI 채팅</span>
+          </button>
         </div>
       </div>
     </div>
