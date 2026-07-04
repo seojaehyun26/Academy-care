@@ -524,6 +524,11 @@ img { display: block; max-width: 100%; }
   border: 1px solid rgba(122, 18, 41, 0.15);
 }
 
+.badge-blue { background: var(--chip-blue); color: var(--chip-blue-fg); }
+.badge-green { background: var(--chip-green); color: var(--chip-green-fg); }
+.badge-purple { background: var(--chip-purple); color: var(--chip-purple-fg); }
+.badge-orange { background: var(--chip-orange); color: var(--chip-orange-fg); }
+
 /* ---- Section Labels ---- */
 .section-label {
   display: inline-flex;
@@ -1585,11 +1590,85 @@ img { display: block; max-width: 100%; }
   margin-bottom: 18px;
 }
 
+/* Category filter row + composer category picker */
+.category-filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  margin-bottom: 14px;
+  scrollbar-width: none;
+}
+.category-filter-row::-webkit-scrollbar { display: none; }
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: var(--r-full);
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+
+.category-chip:active { transform: scale(0.96); }
+.category-chip.active { background: var(--brand); color: white; }
+
+/* Floating compose button — the "당근마켓"-style entry point for writing
+   a post, so the feed itself stays free of an always-visible form. */
+.community-fab {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  border: none;
+  z-index: 90;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.community-fab:hover { background: var(--brand-deep); }
+.community-fab:active { transform: scale(0.94); }
+
+@media (max-width: 900px) {
+  .community-fab {
+    right: 18px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    width: 52px;
+    height: 52px;
+  }
+}
+
+.community-view-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
 .community-post {
   padding: 18px 20px;
   border-radius: var(--r-lg);
-  border: 1px solid var(--border);
   background: var(--surface);
+  box-shadow: var(--shadow-xs);
 }
 
 .community-post + .community-post {
