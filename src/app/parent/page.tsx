@@ -4,14 +4,14 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { auth, db } from "@/lib/firebase";
-import { collection, query, where, onSnapshot, addDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, addDoc, doc, getDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
-  Clock, XCircle, Home, Users2
+  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2
 } from "lucide-react";
 
 interface Student {
@@ -59,6 +59,12 @@ export default function ParentDashboard() {
   const [isAddChildModalOpen, setIsAddChildModalOpen] = useState(false);
   const [newChildName, setNewChildName] = useState("");
   const [newChildAcademyId, setNewChildAcademyId] = useState("");
+
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [connectCode, setConnectCode] = useState("");
+  const [connectChildName, setConnectChildName] = useState("");
+  const [connectError, setConnectError] = useState("");
+  const [connectSubmitting, setConnectSubmitting] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || role !== "parent")) router.push("/");
@@ -192,6 +198,46 @@ export default function ParentDashboard() {
     } catch (e) { console.error(e); }
   };
 
+  const openConnectModal = () => {
+    setConnectCode(""); setConnectChildName(""); setConnectError("");
+    setIsConnectModalOpen(true);
+  };
+
+  const submitConnectAcademy = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setConnectError("");
+    const code = connectCode.trim().toUpperCase();
+    if (!code || !connectChildName.trim() || !user?.email) return;
+    setConnectSubmitting(true);
+    try {
+      const codeSnap = await getDoc(doc(db, "academyCodes", code));
+      if (!codeSnap.exists()) {
+        setConnectError("유효하지 않은 학원 코드입니다. 원장님께 코드를 다시 확인해주세요.");
+        return;
+      }
+      const matchedAcademyId = codeSnap.data().academyId as string;
+      if (childAcademyIds.includes(matchedAcademyId)) {
+        setConnectError("이미 연결된 학원입니다.");
+        return;
+      }
+      await addDoc(collection(db, "students"), {
+        academyId: matchedAcademyId,
+        name: connectChildName.trim(),
+        parentEmail: user.email,
+        status: "none",
+        feeStatus: "unpaid",
+        lastUpdated: new Date().toISOString()
+      });
+      setIsConnectModalOpen(false);
+      setConnectCode(""); setConnectChildName("");
+    } catch (e) {
+      console.error(e);
+      setConnectError("연결 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setConnectSubmitting(false);
+    }
+  };
+
   if (loading || !user || role !== "parent") {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
@@ -290,6 +336,9 @@ export default function ParentDashboard() {
           <button className="sidebar-item" onClick={() => router.push("/chat")}>
             <MessageCircle size={17} /> 학원과 채팅
           </button>
+          <button className="sidebar-item" onClick={openConnectModal}>
+            <KeyRound size={17} /> 학원 연결
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -383,6 +432,30 @@ export default function ParentDashboard() {
                     <div className="home-quick-card-label">커뮤니티</div>
                     <div className="home-quick-card-sub">학부모·원장님과 소통</div>
                   </div>
+                </button>
+                <button className="home-quick-card" onClick={openConnectModal}>
+                  <div className="home-quick-card-icon"><Link2 size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">학원 연결</div>
+                    <div className="home-quick-card-sub">새 학원 코드로 연결하기</div>
+                  </div>
+                </button>
+              </div>
+
+              <div className="home-section-title"><Building2 size={14} /> 연결된 학원</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
+                {childAcademyIds.map(id => (
+                  <div key={id} className="home-child-card">
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{academyLabel(id)}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                        {students.filter(s => s.academyId === id).map(s => s.name).join(", ") || "등록된 자녀 없음"}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button className="home-child-card" style={{ justifyContent: 'center', gap: 8, cursor: 'pointer', border: '1.5px dashed var(--border-strong)', color: 'var(--brand)', fontWeight: 700, fontSize: 13 }} onClick={openConnectModal}>
+                  <KeyRound size={15} /> 새 학원 코드로 연결하기
                 </button>
               </div>
 
@@ -697,6 +770,56 @@ export default function ParentDashboard() {
               <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
                 <button type="button" className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsAddChildModalOpen(false)}>취소</button>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }}>추가하기</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Connect Academy Modal */}
+      {isConnectModalOpen && (
+        <div className="modal-backdrop" onClick={() => setIsConnectModalOpen(false)}>
+          <div className="modal-box" style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-icon" style={{ background: 'var(--brand-light)' }}>
+                <KeyRound size={22} color="var(--brand)" />
+              </div>
+              <div className="modal-title">새 학원 연결하기</div>
+            </div>
+            <form onSubmit={submitConnectAcademy} style={{ padding: '0 20px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {connectError && (
+                <div className="login-error">{connectError}</div>
+              )}
+              <div className="input-group">
+                <label className="input-label">학원 코드</label>
+                <input
+                  className="input"
+                  value={connectCode}
+                  onChange={e => setConnectCode(e.target.value.toUpperCase())}
+                  required
+                  placeholder="원장님께 받은 6자리 코드"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                  maxLength={6}
+                />
+              </div>
+              <div className="input-group">
+                <label className="input-label">자녀 이름</label>
+                <input
+                  className="input"
+                  value={connectChildName}
+                  onChange={e => setConnectChildName(e.target.value)}
+                  required
+                  placeholder="해당 학원에 다니는 자녀의 이름"
+                />
+              </div>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+                연결 후 해당 학원 원장님이 바로 자녀의 출결·과제 관리를 시작할 수 있습니다.
+              </p>
+              <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                <button type="button" className="btn btn-secondary" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsConnectModalOpen(false)}>취소</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} disabled={connectSubmitting}>
+                  {connectSubmitting ? "연결 중..." : "연결하기"}
+                </button>
               </div>
             </form>
           </div>
