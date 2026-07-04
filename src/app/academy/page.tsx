@@ -510,7 +510,7 @@ export default function AcademyDashboard() {
           {activeTab === "community" && (
             <div className="animate-fade-up">
               <CommunityBoard
-                academyId={user.uid}
+                academyIds={[user.uid]}
                 uid={user.uid}
                 displayName={profile?.name || user.email || "학원"}
                 role="academy"

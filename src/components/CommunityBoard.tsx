@@ -31,10 +31,11 @@ interface CommunityComment {
 }
 
 interface Props {
-  academyId: string;
+  academyIds: string[];
   uid: string;
   displayName: string;
   role: "parent" | "academy";
+  getAcademyLabel?: (academyId: string) => string;
 }
 
 function formatDate(dateStr: string) {
@@ -44,23 +45,30 @@ function formatDate(dateStr: string) {
 
 const roleLabel = (r: "parent" | "academy") => (r === "academy" ? "원장" : "학부모");
 
-export default function CommunityBoard({ academyId, uid, displayName, role }: Props) {
+export default function CommunityBoard({ academyIds, uid, displayName, role, getAcademyLabel }: Props) {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [postAcademyId, setPostAcademyId] = useState(academyIds[0] ?? "");
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [comments, setComments] = useState<CommunityComment[]>([]);
   const [commentDraft, setCommentDraft] = useState("");
 
+  // Firestore's `in` operator caps at 30 values, well above any realistic
+  // number of academies a single parent connects to.
+  const idsKey = academyIds.join(",");
+
   useEffect(() => {
-    if (!academyId) return;
-    const q = query(collection(db, "communityPosts"), where("academyId", "==", academyId));
+    if (academyIds.length === 0) { setPosts([]); return; }
+    if (!academyIds.includes(postAcademyId)) setPostAcademyId(academyIds[0]);
+    const q = query(collection(db, "communityPosts"), where("academyId", "in", academyIds));
     const unsub = onSnapshot(q, snap => {
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as CommunityPost));
       setPosts(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
     });
     return () => unsub();
-  }, [academyId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsKey]);
 
   useEffect(() => {
     if (!expandedPostId) {
@@ -79,10 +87,10 @@ export default function CommunityBoard({ academyId, uid, displayName, role }: Pr
 
   const submitPost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+    if (!title.trim() || !content.trim() || !postAcademyId) return;
     try {
       await addDoc(collection(db, "communityPosts"), {
-        academyId, authorId: uid, authorName: displayName, authorRole: role,
+        academyId: postAcademyId, authorId: uid, authorName: displayName, authorRole: role,
         title: title.trim(), content: content.trim(),
         likes: [], commentCount: 0, createdAt: new Date().toISOString(),
       });
@@ -125,6 +133,10 @@ export default function CommunityBoard({ academyId, uid, displayName, role }: Pr
     } catch (e) { console.error(e); }
   };
 
+  if (academyIds.length === 0) {
+    return <div className="card empty-state">학원과 연결한 후 커뮤니티를 이용할 수 있습니다.</div>;
+  }
+
   return (
     <div>
       <div className="card" style={{ padding: 0, overflow: "hidden", marginBottom: 18 }}>
@@ -136,6 +148,16 @@ export default function CommunityBoard({ academyId, uid, displayName, role }: Pr
         </div>
         <div className="card-body">
           <form onSubmit={submitPost} className="community-composer">
+            {academyIds.length > 1 && (
+              <div className="input-group">
+                <label className="input-label">게시할 학원</label>
+                <select className="input" value={postAcademyId} onChange={e => setPostAcademyId(e.target.value)} required>
+                  {academyIds.map(id => (
+                    <option key={id} value={id}>{getAcademyLabel ? getAcademyLabel(id) : id}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="input-group">
               <label className="input-label">제목</label>
               <input className="input" placeholder="제목을 입력하세요" value={title} onChange={e => setTitle(e.target.value)} required />
@@ -168,6 +190,9 @@ export default function CommunityBoard({ academyId, uid, displayName, role }: Pr
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>{post.authorName}</span>
                     <span className="badge badge-neutral">{roleLabel(post.authorRole)}</span>
+                    {academyIds.length > 1 && getAcademyLabel && (
+                      <span className="badge badge-brand">{getAcademyLabel(post.academyId)}</span>
+                    )}
                   </div>
                   <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{formatDate(post.createdAt)}</div>
                 </div>

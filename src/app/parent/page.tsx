@@ -544,16 +544,13 @@ export default function ParentDashboard() {
           {/* Community Tab */}
           {activeTab === "community" && (
             <div className="animate-fade-up">
-              {profile?.academyId ? (
-                <CommunityBoard
-                  academyId={profile.academyId}
-                  uid={user.uid}
-                  displayName={profile?.name || user.email || "학부모"}
-                  role="parent"
-                />
-              ) : (
-                <div className="card empty-state">학원과 연동된 후 커뮤니티를 이용할 수 있습니다.</div>
-              )}
+              <CommunityBoard
+                academyIds={childAcademyIds}
+                uid={user.uid}
+                displayName={profile?.name || user.email || "학부모"}
+                role="parent"
+                getAcademyLabel={academyLabel}
+              />
             </div>
           )}
 
