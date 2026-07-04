@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { collection, addDoc, query, onSnapshot, updateDoc, doc, where, setDoc, getDocs, writeBatch } from "firebase/firestore";
+import { collection, addDoc, query, onSnapshot, updateDoc, doc, where, setDoc, getDocs, writeBatch, deleteDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { generateUniqueAcademyCode } from "@/lib/academyCode";
 import {
@@ -77,6 +77,7 @@ export default function AcademyDashboard() {
   const [newTextbook, setNewTextbook] = useState("");
   const [selectedTextbook, setSelectedTextbook] = useState("");
   const [deletingTextbook, setDeletingTextbook] = useState<string | null>(null);
+  const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
   const [homeworkDesc, setHomeworkDesc] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<string>("");
   const [recentHomeworks, setRecentHomeworks] = useState<Homework[]>([]);
@@ -203,6 +204,15 @@ export default function AcademyDashboard() {
         status: "none", feeStatus: "unpaid", lastUpdated: new Date().toISOString()
       });
       setNewStudentName(""); setNewParentEmail("");
+    } catch (e) { console.error(e); }
+  };
+
+  const confirmDeleteStudent = async () => {
+    if (!deletingStudent) return;
+    try {
+      await deleteDoc(doc(db, "students", deletingStudent.id));
+      if (selectedStudent === deletingStudent.id) setSelectedStudent("");
+      setDeletingStudent(null);
     } catch (e) { console.error(e); }
   };
 
@@ -598,6 +608,9 @@ export default function AcademyDashboard() {
                               <XCircle size={15} />
                             </button>
                           )}
+                          <button className="btn btn-ghost btn-sm" title="원생 삭제" onClick={() => setDeletingStudent(student)}>
+                            <Trash2 size={15} />
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -972,6 +985,28 @@ export default function AcademyDashboard() {
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={() => setDeletingTextbook(null)}>취소</button>
               <button className="btn btn-danger" onClick={() => handleRemoveTextbook(deletingTextbook)}>삭제하기</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Student Modal */}
+      {deletingStudent && (
+        <div className="modal-backdrop" onClick={() => setDeletingStudent(null)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-icon" style={{ background: 'var(--error-bg)' }}>
+                <Trash2 size={22} color="var(--error)" />
+              </div>
+              <div className="modal-title">원생 삭제</div>
+              <div className="modal-desc">
+                정말로 <strong>{deletingStudent.name}</strong> 학생을 삭제하시겠습니까?<br />
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>출결·숙제 기록을 포함해 되돌릴 수 없으며, 학부모 화면에서도 더 이상 조회되지 않습니다.</span>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setDeletingStudent(null)}>취소</button>
+              <button className="btn btn-danger" onClick={confirmDeleteStudent}>삭제하기</button>
             </div>
           </div>
         </div>
