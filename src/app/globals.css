@@ -382,6 +382,8 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
 }
 
+.btn:active { transform: scale(0.97); }
+
 .btn-primary {
   background: linear-gradient(135deg, var(--brand), var(--brand-deep));
   color: white;
@@ -395,7 +397,7 @@ img { display: block; max-width: 100%; }
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  transform: scale(0.97);
 }
 
 .btn-secondary {
@@ -558,8 +560,32 @@ img { display: block; max-width: 100%; }
   to   { opacity: 1; }
 }
 
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(0.4); }
+  70%  { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.06); opacity: 0.85; }
+}
+
 .animate-fade-up { animation: fadeUp 0.35s ease forwards; }
 .animate-fade-in { animation: fadeIn 0.25s ease forwards; }
+
+/* Staggered entrance for repeating list items — only the first few get a
+   delay so long lists don't keep animating far past what's on screen. */
+.stagger-in {
+  animation: fadeUp 0.35s ease backwards;
+}
+.stagger-in:nth-child(1) { animation-delay: 0ms; }
+.stagger-in:nth-child(2) { animation-delay: 40ms; }
+.stagger-in:nth-child(3) { animation-delay: 80ms; }
+.stagger-in:nth-child(4) { animation-delay: 120ms; }
+.stagger-in:nth-child(5) { animation-delay: 160ms; }
+.stagger-in:nth-child(6) { animation-delay: 200ms; }
+.stagger-in:nth-child(n+7) { animation-delay: 240ms; }
 
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -927,10 +953,10 @@ img { display: block; max-width: 100%; }
   font-family: inherit;
   position: relative;
   min-height: 58px;
-  transition: background 0.12s;
+  transition: background 0.12s, transform 0.12s;
 }
 
-.bottom-tab-item:active { background: var(--bg); }
+.bottom-tab-item:active { background: var(--bg); transform: scale(0.96); }
 
 .bottom-tab-icon {
   width: 42px;
@@ -944,6 +970,7 @@ img { display: block; max-width: 100%; }
 
 .bottom-tab-item.active .bottom-tab-icon {
   background: var(--brand-light);
+  transform: scale(1.06);
 }
 
 .bottom-tab-label {
@@ -973,6 +1000,21 @@ img { display: block; max-width: 100%; }
   align-items: center;
   justify-content: center;
   border: 2px solid var(--surface);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.nav-count-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--brand);
+  color: white;
+  border-radius: 999px;
+  padding: 2px 7px;
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.loading-logo {
+  animation: breathe 1.8s ease-in-out infinite;
 }
 
 /* ---- Mobile-specific dashboard ---- */
@@ -1243,6 +1285,7 @@ img { display: block; max-width: 100%; }
   justify-content: center;
   z-index: 9999;
   padding: 20px;
+  animation: fadeIn 0.15s ease;
 }
 
 .modal-box {
@@ -1549,10 +1592,14 @@ img { display: block; max-width: 100%; }
   font-family: inherit;
   background: none;
   border: none;
+  transition: color 0.15s;
 }
 
+.community-action-btn svg { transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.community-action-btn.liked svg { transform: scale(1.15); }
 .community-action-btn.liked { color: var(--brand); }
 .community-action-btn:hover { color: var(--brand); }
+.community-action-btn:active svg { transform: scale(0.85); }
 
 .community-comments {
   margin-top: 12px;

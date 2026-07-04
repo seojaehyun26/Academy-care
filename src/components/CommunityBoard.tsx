@@ -183,7 +183,7 @@ export default function CommunityBoard({ academyIds, uid, displayName, role, get
           const liked = post.likes.includes(uid);
           const isExpanded = expandedPostId === post.id;
           return (
-            <div key={post.id} className="community-post">
+            <div key={post.id} className="community-post stagger-in">
               <div className="community-post-head">
                 <div className="community-avatar">{post.authorName?.[0]?.toUpperCase() ?? "?"}</div>
                 <div style={{ flex: 1 }}>

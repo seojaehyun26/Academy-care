@@ -252,7 +252,7 @@ export default function ParentDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -456,7 +456,7 @@ export default function ParentDashboard() {
               <div className="home-section-title"><Building2 size={14} /> 연결된 학원</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
                 {childAcademyIds.map(id => (
-                  <div key={id} className="home-child-card">
+                  <div key={id} className="home-child-card stagger-in">
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{academyLabel(id)}</div>
                       <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
@@ -473,7 +473,7 @@ export default function ParentDashboard() {
               <div className="home-section-title"><CircleDashed size={14} /> 자녀 출결 현황</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
                 {students.map(student => (
-                  <div key={student.id} className="home-child-card">
+                  <div key={student.id} className="home-child-card stagger-in">
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15 }}>{student.name}</div>
                       <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
@@ -578,7 +578,7 @@ export default function ParentDashboard() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {students.map(student => (
-                  <div key={student.id} className="card" style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                  <div key={student.id} className="card stagger-in" style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
                     <div>
                       <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{student.name}</div>
                       <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{academyLabel(student.academyId)}</div>
@@ -629,7 +629,7 @@ export default function ParentDashboard() {
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {students.map(student => (
-                  <div key={student.id} className="card" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                  <div key={student.id} className="card stagger-in" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                     <div>
                       <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{student.name}</div>
                       <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
@@ -717,7 +717,7 @@ export default function ParentDashboard() {
               ) : (
                 <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                   {announcements.map((ann, idx) => (
-                    <div key={ann.id} className="announcement-item" style={{ padding: '18px 24px', borderBottom: idx < announcements.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                    <div key={ann.id} className="announcement-item stagger-in" style={{ padding: '18px 24px', borderBottom: idx < announcements.length - 1 ? '1px solid var(--border)' : 'none' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
                         <div className="announcement-title">{ann.title}</div>
                         <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0, marginLeft: 12 }}>{formatDate(ann.date)}</span>

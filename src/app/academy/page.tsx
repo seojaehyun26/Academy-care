@@ -298,7 +298,7 @@ export default function AcademyDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -356,9 +356,7 @@ export default function AcademyDashboard() {
               {item.icon}
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge ? (
-                <span style={{ fontSize: 11, fontWeight: 700, background: '#7A1229', color: 'white', borderRadius: 999, padding: '2px 7px' }}>
-                  {item.badge}
-                </span>
+                <span className="nav-count-badge">{item.badge}</span>
               ) : null}
             </button>
           ))}
@@ -571,7 +569,7 @@ export default function AcademyDashboard() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 420, overflowY: 'auto' }}>
                     {filteredStudents.map(student => (
-                      <div key={student.id} className="student-row">
+                      <div key={student.id} className="student-row stagger-in">
                         <div className="student-row-info">
                           <div className="student-row-name">
                             {student.name}
@@ -642,7 +640,7 @@ export default function AcademyDashboard() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 500, overflowY: 'auto' }}>
                   {filteredParents.map(parent => (
-                    <div key={parent.id} className="student-row">
+                    <div key={parent.id} className="student-row stagger-in">
                       <div className="student-row-info">
                         <div className="student-row-name" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                           <span>{parent.name}</span>
@@ -843,7 +841,7 @@ export default function AcademyDashboard() {
                 </div>
                 <div className="card-body" style={{ maxHeight: 500, overflowY: 'auto' }}>
                   {announcements.map(ann => (
-                    <div key={ann.id} className="announcement-item">
+                    <div key={ann.id} className="announcement-item stagger-in">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
                         <div className="announcement-title">{ann.title}</div>
                         <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0, marginLeft: 12 }}>{formatDate(ann.date)}</span>
@@ -874,7 +872,7 @@ export default function AcademyDashboard() {
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {consultations.map(cons => (
-                      <div key={cons.id} className="consult-item">
+                      <div key={cons.id} className="consult-item stagger-in">
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                             <span style={{ fontSize: 15, fontWeight: 600 }}>{cons.studentName} 학부모님</span>
@@ -940,7 +938,7 @@ export default function AcademyDashboard() {
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                       {pendingParents.map(p => (
-                        <div key={p.id} className="student-row">
+                        <div key={p.id} className="student-row stagger-in">
                           <div className="student-row-info">
                             <div className="student-row-name">{p.name || p.email}</div>
                             <div className="student-row-meta">
