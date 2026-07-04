@@ -447,28 +447,28 @@ export default function AcademyDashboard() {
 
               <div className="home-quick-grid">
                 <button className="home-quick-card" onClick={() => setActiveTab("consultations")}>
-                  <div className="home-quick-card-icon"><CalendarCheck size={17} /></div>
+                  <div className="home-quick-card-icon orange"><CalendarCheck size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">상담 신청</div>
                     <div className="home-quick-card-sub">{pendingConsults > 0 ? `대기중 ${pendingConsults}건` : "대기중인 신청 없음"}</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setActiveTab("approvals")}>
-                  <div className="home-quick-card-icon"><ShieldCheck size={17} /></div>
+                  <div className="home-quick-card-icon purple"><ShieldCheck size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">가입 승인</div>
                     <div className="home-quick-card-sub">{pendingParents.length > 0 ? `대기중 ${pendingParents.length}건` : "대기중인 신청 없음"}</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setActiveTab("announcements")}>
-                  <div className="home-quick-card-icon"><Megaphone size={17} /></div>
+                  <div className="home-quick-card-icon blue"><Megaphone size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">공지사항</div>
                     <div className="home-quick-card-sub">등록 및 확인</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setActiveTab("community")}>
-                  <div className="home-quick-card-icon"><Users2 size={17} /></div>
+                  <div className="home-quick-card-icon green"><Users2 size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">커뮤니티</div>
                     <div className="home-quick-card-sub">학부모와 소통</div>

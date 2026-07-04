@@ -417,28 +417,28 @@ export default function ParentDashboard() {
 
               <div className="home-quick-grid">
                 <button className="home-quick-card" onClick={() => selectTab("announcements")}>
-                  <div className="home-quick-card-icon"><Bell size={17} /></div>
+                  <div className="home-quick-card-icon blue"><Bell size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">공지사항</div>
                     <div className="home-quick-card-sub">{unreadAnnouncements > 0 ? `안 읽은 공지 ${unreadAnnouncements}건` : "새 공지 없음"}</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setIsConsultModalOpen(true)}>
-                  <div className="home-quick-card-icon"><PhoneCall size={17} /></div>
+                  <div className="home-quick-card-icon orange"><PhoneCall size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">상담 신청</div>
                     <div className="home-quick-card-sub">원장님께 상담 요청</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setIsFeeModalOpen(true)}>
-                  <div className="home-quick-card-icon"><CreditCard size={17} /></div>
+                  <div className="home-quick-card-icon green"><CreditCard size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">원비 확인</div>
                     <div className="home-quick-card-sub">납부 현황 확인하기</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => selectTab("community")}>
-                  <div className="home-quick-card-icon"><Users2 size={17} /></div>
+                  <div className="home-quick-card-icon purple"><Users2 size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">커뮤니티</div>
                     <div className="home-quick-card-sub">학부모·원장님과 소통</div>
@@ -715,16 +715,18 @@ export default function ParentDashboard() {
                   새로운 공지사항이 없습니다.
                 </div>
               ) : (
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                  {announcements.map((ann, idx) => (
-                    <div key={ann.id} className="announcement-item stagger-in" style={{ padding: '18px 24px', borderBottom: idx < announcements.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                        <div className="announcement-title">{ann.title}</div>
-                        <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0, marginLeft: 12 }}>{formatDate(ann.date)}</span>
+                <div className="card">
+                  <div className="card-body">
+                    {announcements.map(ann => (
+                      <div key={ann.id} className="announcement-item stagger-in">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                          <div className="announcement-title">{ann.title}</div>
+                          <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0, marginLeft: 12 }}>{formatDate(ann.date)}</span>
+                        </div>
+                        <div className="announcement-content">{ann.content}</div>
                       </div>
-                      <div className="announcement-content">{ann.content}</div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -759,7 +761,7 @@ export default function ParentDashboard() {
       {/* Consultation Modal */}
       {isConsultModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsConsultModalOpen(false)}>
-          <div className="modal-box" style={{ maxWidth: 440 }} onClick={e => e.stopPropagation()}>
+          <div className="modal-box modal-box-lg" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <div className="modal-icon" style={{ background: 'var(--brand-light)' }}>
                 <PhoneCall size={22} color="var(--brand)" />
@@ -796,7 +798,7 @@ export default function ParentDashboard() {
       {/* Add Child Modal */}
       {isAddChildModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsAddChildModalOpen(false)}>
-          <div className="modal-box" style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()}>
+          <div className="modal-box modal-box-md" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <div className="modal-icon" style={{ background: 'var(--brand-light)' }}>
                 <UserPlus size={22} color="var(--brand)" />
@@ -839,7 +841,7 @@ export default function ParentDashboard() {
       {/* Connect Academy Modal */}
       {isConnectModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsConnectModalOpen(false)}>
-          <div className="modal-box" style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()}>
+          <div className="modal-box modal-box-md" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <div className="modal-icon" style={{ background: 'var(--brand-light)' }}>
                 <KeyRound size={22} color="var(--brand)" />
@@ -911,7 +913,7 @@ export default function ParentDashboard() {
       {/* Fee Modal */}
       {isFeeModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsFeeModalOpen(false)}>
-          <div className="modal-box" style={{ maxWidth: 400 }} onClick={e => e.stopPropagation()}>
+          <div className="modal-box modal-box-md" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <div className="modal-icon" style={{ background: '#EFF6FF' }}>
                 <CreditCard size={22} color="#1D4ED8" />
