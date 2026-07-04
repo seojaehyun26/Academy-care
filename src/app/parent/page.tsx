@@ -4,14 +4,14 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { auth, db } from "@/lib/firebase";
-import { collection, query, where, onSnapshot, addDoc, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, addDoc, doc, getDoc, deleteDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
-  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users
+  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users, Trash2
 } from "lucide-react";
 
 interface Student {
@@ -65,6 +65,8 @@ export default function ParentDashboard() {
   const [connectChildName, setConnectChildName] = useState("");
   const [connectError, setConnectError] = useState("");
   const [connectSubmitting, setConnectSubmitting] = useState(false);
+
+  const [deletingStudent, setDeletingStudent] = useState<Student | null>(null);
 
   useEffect(() => {
     if (!loading && (!user || role !== "parent")) router.push("/");
@@ -236,6 +238,14 @@ export default function ParentDashboard() {
     } finally {
       setConnectSubmitting(false);
     }
+  };
+
+  const confirmDeleteStudent = async () => {
+    if (!deletingStudent) return;
+    try {
+      await deleteDoc(doc(db, "students", deletingStudent.id));
+      setDeletingStudent(null);
+    } catch (e) { console.error(e); }
   };
 
   if (loading || !user || role !== "parent") {
@@ -581,6 +591,9 @@ export default function ParentDashboard() {
                         ? <span className="badge badge-success"><CheckCircle size={11} /> 원비 납부</span>
                         : <span className="badge badge-error">원비 미납</span>
                       }
+                      <button className="btn btn-ghost btn-sm" title="자녀 삭제" onClick={() => setDeletingStudent(student)}>
+                        <Trash2 size={14} />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -869,6 +882,28 @@ export default function ParentDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Student Modal */}
+      {deletingStudent && (
+        <div className="modal-backdrop" onClick={() => setDeletingStudent(null)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-icon" style={{ background: 'var(--error-bg)' }}>
+                <Trash2 size={22} color="var(--error)" />
+              </div>
+              <div className="modal-title">자녀 삭제</div>
+              <div className="modal-desc">
+                정말로 <strong>{deletingStudent.name}</strong> 학생을 삭제하시겠습니까?<br />
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>출결·숙제 기록을 포함해 되돌릴 수 없으며, 학원에서도 더 이상 조회되지 않습니다.</span>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setDeletingStudent(null)}>취소</button>
+              <button className="btn btn-danger" onClick={confirmDeleteStudent}>삭제하기</button>
+            </div>
           </div>
         </div>
       )}
