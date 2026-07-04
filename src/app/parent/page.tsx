@@ -7,10 +7,11 @@ import { auth, db } from "@/lib/firebase";
 import { collection, query, where, onSnapshot, addDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
+import CommunityBoard from "@/components/CommunityBoard";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
-  Clock, XCircle
+  Clock, XCircle, Home, Users2
 } from "lucide-react";
 
 interface Student {
@@ -46,7 +47,7 @@ export default function ParentDashboard() {
   const [homeworks, setHomeworks] = useState<Homework[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const prevStatuses = useRef<Record<string, string>>({});
-  const [activeTab, setActiveTab] = useState<"status" | "homework" | "announcements" | "calendar">("status");
+  const [activeTab, setActiveTab] = useState<"home" | "status" | "homework" | "announcements" | "calendar" | "community">("home");
   const [lastSeenAnnouncementsAt, setLastSeenAnnouncementsAt] = useState("");
 
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
@@ -73,7 +74,7 @@ export default function ParentDashboard() {
     a => !lastSeenAnnouncementsAt || new Date(a.date).getTime() > new Date(lastSeenAnnouncementsAt).getTime()
   ).length;
 
-  const selectTab = (id: "status" | "homework" | "announcements" | "calendar") => {
+  const selectTab = (id: "home" | "status" | "homework" | "announcements" | "calendar" | "community") => {
     setActiveTab(id);
     if (id === "announcements" && user) {
       const now = new Date().toISOString();
@@ -245,10 +246,12 @@ export default function ParentDashboard() {
   }
 
   const navItems = [
+    { id: "home", label: "홈", icon: <Home size={17} />, mobileIcon: <Home size={20} /> },
     { id: "status", label: "실시간 출결", icon: <CircleDashed size={17} />, mobileIcon: <CircleDashed size={20} /> },
     { id: "homework", label: "숙제 알림", icon: <ClipboardList size={17} />, mobileIcon: <ClipboardList size={20} /> },
     { id: "announcements", label: "공지사항", icon: <Bell size={17} />, mobileIcon: <Bell size={20} />, badge: unreadAnnouncements },
     { id: "calendar", label: "출결 달력", icon: <CalendarPlus size={17} />, mobileIcon: <CalendarPlus size={20} /> },
+    { id: "community", label: "커뮤니티", icon: <Users2 size={17} />, mobileIcon: <Users2 size={20} /> },
   ];
 
   return (
@@ -343,6 +346,143 @@ export default function ParentDashboard() {
         </div>
 
         <div className="page-body">
+
+          {/* Home Tab */}
+          {activeTab === "home" && (
+            <div className="animate-fade-up">
+              <div className="home-hero">
+                <div className="home-hero-eyebrow">{new Date().getMonth() + 1}월 {new Date().getDate()}일 오늘도 좋은 하루 되세요</div>
+                <div className="home-hero-title">{profile?.name || user.email}님, 안녕하세요 👋</div>
+              </div>
+
+              <div className="home-quick-grid">
+                <button className="home-quick-card" onClick={() => selectTab("announcements")}>
+                  <div className="home-quick-card-icon"><Bell size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">공지사항</div>
+                    <div className="home-quick-card-sub">{unreadAnnouncements > 0 ? `안 읽은 공지 ${unreadAnnouncements}건` : "새 공지 없음"}</div>
+                  </div>
+                </button>
+                <button className="home-quick-card" onClick={() => setIsConsultModalOpen(true)}>
+                  <div className="home-quick-card-icon"><PhoneCall size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">상담 신청</div>
+                    <div className="home-quick-card-sub">원장님께 상담 요청</div>
+                  </div>
+                </button>
+                <button className="home-quick-card" onClick={() => setIsFeeModalOpen(true)}>
+                  <div className="home-quick-card-icon"><CreditCard size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">원비 확인</div>
+                    <div className="home-quick-card-sub">납부 현황 확인하기</div>
+                  </div>
+                </button>
+                <button className="home-quick-card" onClick={() => selectTab("community")}>
+                  <div className="home-quick-card-icon"><Users2 size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">커뮤니티</div>
+                    <div className="home-quick-card-sub">학부모·원장님과 소통</div>
+                  </div>
+                </button>
+              </div>
+
+              <div className="home-section-title"><CircleDashed size={14} /> 자녀 출결 현황</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
+                {students.map(student => (
+                  <div key={student.id} className="home-child-card">
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 15 }}>{student.name}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                        {student.status !== "none" ? formatDate(student.lastUpdated) : "기록 없음"}
+                      </div>
+                    </div>
+                    {student.status === "arrived" && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', color: 'white', fontWeight: 700, fontSize: 13 }}>
+                        <BookOpen size={14} /> 등원 중
+                      </span>
+                    )}
+                    {student.status === "departed" && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'linear-gradient(135deg, #800020, #5A0016)', color: 'white', fontWeight: 700, fontSize: 13 }}>
+                        <CheckCircle size={14} /> 하원 완료
+                      </span>
+                    )}
+                    {student.status === "none" && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'var(--bg)', color: 'var(--text-muted)', fontWeight: 700, fontSize: 13, border: '1px solid var(--border)' }}>
+                        <CircleDashed size={14} /> 대기중
+                      </span>
+                    )}
+                  </div>
+                ))}
+                {students.length === 0 && (
+                  <div className="card empty-state">등록된 자녀가 없습니다.</div>
+                )}
+              </div>
+
+              <div className="two-col-grid">
+                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                  <div className="card-header">
+                    <div className="card-title"><ClipboardList size={15} /> 최근 숙제</div>
+                  </div>
+                  <div className="card-body">
+                    {homeworks.length === 0 ? (
+                      <div className="empty-state" style={{ padding: '20px 0' }}>등록된 숙제가 없습니다.</div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        {homeworks.slice(0, 3).map(hw => {
+                          const studentName = students.find(s => s.id === hw.studentId)?.name || "학생";
+                          return (
+                            <div key={hw.id} style={{ fontSize: 13 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                                <span style={{ fontWeight: 700 }}>{studentName}</span>
+                                <span className="badge badge-brand">{hw.textbook}</span>
+                              </div>
+                              <div style={{ color: 'var(--text-secondary)' }}>{hw.description}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                  <div className="card-header">
+                    <div className="card-title"><Megaphone size={15} /> 최근 공지사항</div>
+                  </div>
+                  <div className="card-body">
+                    {announcements.length === 0 ? (
+                      <div className="empty-state" style={{ padding: '20px 0' }}>새로운 공지사항이 없습니다.</div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        {announcements.slice(0, 3).map(ann => (
+                          <div key={ann.id} style={{ fontSize: 13 }}>
+                            <div style={{ fontWeight: 700, marginBottom: 2 }}>{ann.title}</div>
+                            <div style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{ann.content}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Community Tab */}
+          {activeTab === "community" && (
+            <div className="animate-fade-up">
+              {profile?.academyId ? (
+                <CommunityBoard
+                  academyId={profile.academyId}
+                  uid={user.uid}
+                  displayName={profile?.name || user.email || "학부모"}
+                  role="parent"
+                />
+              ) : (
+                <div className="card empty-state">학원과 연동된 후 커뮤니티를 이용할 수 있습니다.</div>
+              )}
+            </div>
+          )}
 
           {/* Status Tab */}
           {activeTab === "status" && (

@@ -891,10 +891,14 @@ img { display: block; max-width: 100%; }
 .bottom-tab-bar-inner {
   display: flex;
   align-items: stretch;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
+.bottom-tab-bar-inner::-webkit-scrollbar { display: none; }
+
 .bottom-tab-item {
-  flex: 1;
+  flex: 1 0 68px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1350,4 +1354,216 @@ img { display: block; max-width: 100%; }
   border: 1px solid var(--border);
   cursor: pointer;
   font-family: inherit;
+}
+
+/* ---- Home dashboard ---- */
+.home-hero {
+  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+  border-radius: var(--r-xl);
+  padding: 24px 26px;
+  color: white;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-brand);
+}
+
+.home-hero-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 6px;
+}
+
+.home-hero-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.home-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 900px) {
+  .home-quick-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.home-quick-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.home-quick-card:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.home-quick-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-md);
+  background: var(--brand-light);
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.home-quick-card-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.home-quick-card-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.home-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.home-child-card {
+  padding: 16px 18px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ---- Community board ---- */
+.community-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.community-post {
+  padding: 18px 20px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.community-post + .community-post {
+  margin-top: 12px;
+}
+
+.community-post-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.community-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.community-post-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.community-post-content {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 12px;
+}
+
+.community-post-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.community-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  background: none;
+  border: none;
+}
+
+.community-action-btn.liked { color: var(--brand); }
+.community-action-btn:hover { color: var(--brand); }
+
+.community-comments {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.community-comment {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.community-comment-bubble {
+  flex: 1;
+  background: var(--bg);
+  border-radius: var(--r-md);
+  padding: 8px 12px;
+}
+
+.community-comment-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 6px;
+}
+
+.community-comment-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }

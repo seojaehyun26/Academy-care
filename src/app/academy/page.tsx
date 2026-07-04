@@ -11,9 +11,10 @@ import {
   Search, Users, CheckCircle, XCircle, LogOut, MessageCircle, BookOpen, Plus,
   Clock, UserCheck, CircleDashed, X, Trash2, Calendar as CalendarIcon, Megaphone,
   CalendarCheck, User, Book, FileText, Library, GraduationCap, Phone, Mail,
-  ShieldCheck, KeyRound, Copy
+  ShieldCheck, KeyRound, Copy, Home, Users2
 } from "lucide-react";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
+import CommunityBoard from "@/components/CommunityBoard";
 
 interface Student {
   id: string;
@@ -87,7 +88,7 @@ export default function AcademyDashboard() {
   const [parentSearch, setParentSearch] = useState("");
   const [linkedParents, setLinkedParents] = useState<LinkedParent[]>([]);
   const [codeCopied, setCodeCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"students" | "parents" | "homework" | "announcements" | "consultations" | "approvals">("students");
+  const [activeTab, setActiveTab] = useState<"home" | "students" | "parents" | "homework" | "announcements" | "consultations" | "approvals" | "community">("home");
 
   useEffect(() => {
     if (!loading && (!user || role !== "academy")) router.push("/");
@@ -304,12 +305,14 @@ export default function AcademyDashboard() {
   const pendingConsults = consultations.filter(c => c.status === "pending").length;
 
   const navItems = [
+    { id: "home", label: "홈", icon: <Home size={17} />, mobileIcon: <Home size={20} /> },
     { id: "students", label: "원생 출결", icon: <Users size={17} />, mobileIcon: <Users size={20} /> },
     { id: "parents", label: "학부모 목록", icon: <User size={17} />, mobileIcon: <User size={20} /> },
     { id: "homework", label: "과제·교재", icon: <BookOpen size={17} />, mobileIcon: <BookOpen size={20} /> },
     { id: "announcements", label: "공지사항", icon: <Megaphone size={17} />, mobileIcon: <Megaphone size={20} /> },
     { id: "consultations", label: "상담 신청", icon: <CalendarCheck size={17} />, mobileIcon: <CalendarCheck size={20} />, badge: pendingConsults },
     { id: "approvals", label: "가입 승인", icon: <ShieldCheck size={17} />, mobileIcon: <ShieldCheck size={20} />, badge: pendingParents.length },
+    { id: "community", label: "커뮤니티", icon: <Users2 size={17} />, mobileIcon: <Users2 size={20} /> },
   ];
 
   const filteredParents = parents.filter(p =>
@@ -425,6 +428,95 @@ export default function AcademyDashboard() {
               <div className="stat-value" style={{ color: 'var(--text-muted)' }}>{absentStudents}<span className="stat-unit">명</span></div>
             </div>
           </div>
+
+          {/* Home Tab */}
+          {activeTab === "home" && (
+            <div className="animate-fade-up">
+              <div className="home-hero">
+                <div className="home-hero-eyebrow">{new Date().getMonth() + 1}월 {new Date().getDate()}일 오늘의 학원 현황이에요</div>
+                <div className="home-hero-title">{profile?.name || user.email}님, 안녕하세요 👋</div>
+              </div>
+
+              <div className="home-quick-grid">
+                <button className="home-quick-card" onClick={() => setActiveTab("consultations")}>
+                  <div className="home-quick-card-icon"><CalendarCheck size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">상담 신청</div>
+                    <div className="home-quick-card-sub">{pendingConsults > 0 ? `대기중 ${pendingConsults}건` : "대기중인 신청 없음"}</div>
+                  </div>
+                </button>
+                <button className="home-quick-card" onClick={() => setActiveTab("approvals")}>
+                  <div className="home-quick-card-icon"><ShieldCheck size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">가입 승인</div>
+                    <div className="home-quick-card-sub">{pendingParents.length > 0 ? `대기중 ${pendingParents.length}건` : "대기중인 신청 없음"}</div>
+                  </div>
+                </button>
+                <button className="home-quick-card" onClick={() => setActiveTab("announcements")}>
+                  <div className="home-quick-card-icon"><Megaphone size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">공지사항</div>
+                    <div className="home-quick-card-sub">등록 및 확인</div>
+                  </div>
+                </button>
+                <button className="home-quick-card" onClick={() => setActiveTab("community")}>
+                  <div className="home-quick-card-icon"><Users2 size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">커뮤니티</div>
+                    <div className="home-quick-card-sub">학부모와 소통</div>
+                  </div>
+                </button>
+              </div>
+
+              <div className="two-col-grid">
+                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                  <div className="card-header">
+                    <div className="card-title"><KeyRound size={15} /> 학원 코드</div>
+                  </div>
+                  <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ flex: 1, padding: '12px 16px', borderRadius: 12, background: 'var(--bg)', border: '1.5px dashed var(--border-strong)', fontSize: 22, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
+                      {profile?.joinCode || '생성 중...'}
+                    </div>
+                    <button className="btn btn-secondary" onClick={copyJoinCode} disabled={!profile?.joinCode}>
+                      <Copy size={14} /> {codeCopied ? '복사됨!' : '복사'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                  <div className="card-header">
+                    <div className="card-title"><Megaphone size={15} /> 최근 공지사항</div>
+                  </div>
+                  <div className="card-body">
+                    {announcements.length === 0 ? (
+                      <div className="empty-state" style={{ padding: '20px 0' }}>등록된 공지사항이 없습니다.</div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        {announcements.slice(0, 3).map(ann => (
+                          <div key={ann.id} style={{ fontSize: 13 }}>
+                            <div style={{ fontWeight: 700, marginBottom: 2 }}>{ann.title}</div>
+                            <div style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{ann.content}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Community Tab */}
+          {activeTab === "community" && (
+            <div className="animate-fade-up">
+              <CommunityBoard
+                academyId={user.uid}
+                uid={user.uid}
+                displayName={profile?.name || user.email || "학원"}
+                role="academy"
+              />
+            </div>
+          )}
 
           {/* Students Tab */}
           {activeTab === "students" && (
