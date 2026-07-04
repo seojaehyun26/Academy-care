@@ -11,7 +11,7 @@ import CommunityBoard from "@/components/CommunityBoard";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
-  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2
+  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users
 } from "lucide-react";
 
 interface Student {
@@ -47,7 +47,7 @@ export default function ParentDashboard() {
   const [homeworks, setHomeworks] = useState<Homework[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const prevStatuses = useRef<Record<string, string>>({});
-  const [activeTab, setActiveTab] = useState<"home" | "status" | "homework" | "announcements" | "calendar" | "community">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "children" | "status" | "homework" | "announcements" | "calendar" | "community">("home");
   const [lastSeenAnnouncementsAt, setLastSeenAnnouncementsAt] = useState("");
 
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
@@ -80,7 +80,7 @@ export default function ParentDashboard() {
     a => !lastSeenAnnouncementsAt || new Date(a.date).getTime() > new Date(lastSeenAnnouncementsAt).getTime()
   ).length;
 
-  const selectTab = (id: "home" | "status" | "homework" | "announcements" | "calendar" | "community") => {
+  const selectTab = (id: "home" | "children" | "status" | "homework" | "announcements" | "calendar" | "community") => {
     setActiveTab(id);
     if (id === "announcements" && user) {
       const now = new Date().toISOString();
@@ -293,6 +293,7 @@ export default function ParentDashboard() {
 
   const navItems = [
     { id: "home", label: "홈", icon: <Home size={17} />, mobileIcon: <Home size={20} /> },
+    { id: "children", label: "자녀 관리", icon: <Users size={17} />, mobileIcon: <Users size={20} /> },
     { id: "status", label: "실시간 출결", icon: <CircleDashed size={17} />, mobileIcon: <CircleDashed size={20} /> },
     { id: "homework", label: "숙제 알림", icon: <ClipboardList size={17} />, mobileIcon: <ClipboardList size={20} /> },
     { id: "announcements", label: "공지사항", icon: <Bell size={17} />, mobileIcon: <Bell size={20} />, badge: unreadAnnouncements },
@@ -551,6 +552,55 @@ export default function ParentDashboard() {
                 role="parent"
                 getAcademyLabel={academyLabel}
               />
+            </div>
+          )}
+
+          {/* Children Tab */}
+          {activeTab === "children" && (
+            <div className="animate-fade-up">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={childAcademyIds.length > 0 ? openAddChildModal : openConnectModal}
+                >
+                  <UserPlus size={14} /> 자녀 추가
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {students.map(student => (
+                  <div key={student.id} className="card" style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                    <div>
+                      <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{student.name}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{academyLabel(student.academyId)}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {student.status === "arrived" && <span className="status-chip-arrived">등원중</span>}
+                      {student.status === "departed" && <span className="status-chip-departed">하원완료</span>}
+                      {student.status === "none" && <span className="status-chip-none">대기중</span>}
+                      {student.feeStatus === "paid"
+                        ? <span className="badge badge-success"><CheckCircle size={11} /> 원비 납부</span>
+                        : <span className="badge badge-error">원비 미납</span>
+                      }
+                    </div>
+                  </div>
+                ))}
+                {students.length === 0 && (
+                  <div className="card empty-state">
+                    <div className="empty-state-icon">👦</div>
+                    등록된 자녀가 없습니다.
+                    <div style={{ marginTop: 10 }}>
+                      <button className="btn btn-primary btn-sm" onClick={childAcademyIds.length > 0 ? openAddChildModal : openConnectModal}>
+                        <UserPlus size={14} /> 자녀 추가하기
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="home-section-title" style={{ marginTop: 24 }}><Link2 size={14} /> 다른 학원에 다니는 자녀가 있나요?</div>
+              <button className="home-child-card" style={{ width: '100%', justifyContent: 'center', gap: 8, cursor: 'pointer', border: '1.5px dashed var(--border-strong)', color: 'var(--brand)', fontWeight: 700, fontSize: 13 }} onClick={openConnectModal}>
+                <KeyRound size={15} /> 새 학원 코드로 연결하기
+              </button>
             </div>
           )}
 
