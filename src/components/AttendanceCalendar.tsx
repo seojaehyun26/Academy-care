@@ -146,7 +146,7 @@ export default function AttendanceCalendar({ studentId, studentName, onAddConsul
         <h2 className="calendar-title">
           {format(currentDate, "M월")}
         </h2>
-        <div style={{ backgroundColor: 'white' }}>
+        <div style={{ backgroundColor: 'var(--surface)' }}>
           {rows}
         </div>
         
@@ -175,7 +175,7 @@ export default function AttendanceCalendar({ studentId, studentName, onAddConsul
     if (!arrivedLog && !departedLog) {
       return (
         <div className="calendar-detail-item" style={{justifyContent: 'center'}}>
-          <span style={{color: '#9CA3AF', fontSize: '0.875rem'}}>출결 기록이 없습니다.</span>
+          <span style={{color: 'var(--text-muted)', fontSize: '0.875rem'}}>출결 기록이 없습니다.</span>
         </div>
       );
     }

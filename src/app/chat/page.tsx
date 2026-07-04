@@ -189,7 +189,7 @@ export default function ChatPage() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #800020, #5A0016)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <MessageSquare size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -302,7 +302,7 @@ export default function ChatPage() {
                     {/* Avatar */}
                     <div style={{
                       width: 44, height: 44, borderRadius: '50%',
-                      background: selectedRoom?.id === room.id ? 'var(--brand)' : 'linear-gradient(135deg, #667eea, #764ba2)',
+                      background: selectedRoom?.id === room.id ? 'var(--brand)' : 'linear-gradient(135deg, var(--accent), var(--accent-deep))',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       color: 'white', fontSize: 16, fontWeight: 700, flexShrink: 0,
                     }}>
@@ -330,7 +330,7 @@ export default function ChatPage() {
 
         {/* ── Chat Panel ── */}
         {(!isMobileView || !showRoomList) && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#F7F8FC' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg)' }}>
             {selectedRoom ? (
               <>
                 {/* Chat Header */}
@@ -352,7 +352,7 @@ export default function ChatPage() {
                       <ArrowLeft size={17} />
                     </button>
                   )}
-                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, #667eea, #764ba2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, flexShrink: 0 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent), var(--accent-deep))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, flexShrink: 0 }}>
                     {role === "academy" ? selectedRoom.parentName[0]?.toUpperCase() : <GraduationCap size={18} />}
                   </div>
                   <div style={{ flex: 1 }}>
@@ -406,7 +406,7 @@ export default function ChatPage() {
                               {!isMe && (
                                 <div style={{
                                   width: 32, height: 32, borderRadius: '50%',
-                                  background: 'linear-gradient(135deg, #800020, #5A0016)',
+                                  background: 'linear-gradient(135deg, #7A1229, #4C0916)',
                                   display: isLast ? 'flex' : 'none',
                                   alignItems: 'center', justifyContent: 'center',
                                   color: 'white', fontSize: 12, fontWeight: 700, flexShrink: 0,
@@ -426,7 +426,7 @@ export default function ChatPage() {
                                     borderRadius: isMe
                                       ? `18px 18px ${isLast ? '4px' : '18px'} 18px`
                                       : `18px 18px 18px ${isLast ? '4px' : '18px'}`,
-                                    background: isMe ? 'linear-gradient(135deg, #800020, #5A0016)' : 'var(--surface)',
+                                    background: isMe ? 'linear-gradient(135deg, #7A1229, #4C0916)' : 'var(--surface)',
                                     color: isMe ? 'white' : 'var(--text-primary)',
                                     fontSize: 14,
                                     lineHeight: 1.5,
@@ -543,7 +543,7 @@ export default function ChatPage() {
                       disabled={!newMessage.trim()}
                       style={{
                         width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
-                        background: newMessage.trim() ? 'linear-gradient(135deg, #800020, #5A0016)' : 'var(--bg)',
+                        background: newMessage.trim() ? 'linear-gradient(135deg, #7A1229, #4C0916)' : 'var(--bg)',
                         border: newMessage.trim() ? 'none' : '1px solid var(--border)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         cursor: newMessage.trim() ? 'pointer' : 'default',

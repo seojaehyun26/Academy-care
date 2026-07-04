@@ -252,7 +252,7 @@ export default function ParentDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #800020, #5A0016)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -271,7 +271,7 @@ export default function ParentDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center', maxWidth: 360, padding: 24 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #800020, #5A0016)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <XCircle size={28} color="white" />
           </div>
           <p style={{ fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>가입이 거절되었습니다</p>
@@ -288,7 +288,7 @@ export default function ParentDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center', maxWidth: 360, padding: 24 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #800020, #5A0016)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <Clock size={28} color="white" />
           </div>
           <p style={{ fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>원장님 승인 대기 중입니다</p>
@@ -486,7 +486,7 @@ export default function ParentDashboard() {
                       </span>
                     )}
                     {student.status === "departed" && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'linear-gradient(135deg, #800020, #5A0016)', color: 'white', fontWeight: 700, fontSize: 13 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'linear-gradient(135deg, #7A1229, #4C0916)', color: 'white', fontWeight: 700, fontSize: 13 }}>
                         <CheckCircle size={14} /> 하원 완료
                       </span>
                     )}
@@ -643,7 +643,7 @@ export default function ParentDashboard() {
                         </span>
                       )}
                       {student.status === "departed" && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 999, background: 'linear-gradient(135deg, #800020, #5A0016)', color: 'white', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(128,0,32,0.3)' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 999, background: 'linear-gradient(135deg, #7A1229, #4C0916)', color: 'white', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(128,0,32,0.3)' }}>
                           <CheckCircle size={18} /> 하원 완료
                         </span>
                       )}

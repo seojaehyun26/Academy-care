@@ -298,7 +298,7 @@ export default function AcademyDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #800020, #5A0016)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -356,7 +356,7 @@ export default function AcademyDashboard() {
               {item.icon}
               <span style={{ flex: 1 }}>{item.label}</span>
               {item.badge ? (
-                <span style={{ fontSize: 11, fontWeight: 700, background: '#800020', color: 'white', borderRadius: 999, padding: '2px 7px' }}>
+                <span style={{ fontSize: 11, fontWeight: 700, background: '#7A1229', color: 'white', borderRadius: 999, padding: '2px 7px' }}>
                   {item.badge}
                 </span>
               ) : null}
@@ -429,7 +429,7 @@ export default function AcademyDashboard() {
               <div className="stat-label" style={{ color: 'var(--success)' }}><UserCheck size={13} /> 등원 완료</div>
               <div className="stat-value" style={{ color: 'var(--success)' }}>{arrivedStudents}<span className="stat-unit">명</span></div>
             </div>
-            <div className="stat-card" style={{ borderTop: '3px solid #800020' }}>
+            <div className="stat-card" style={{ borderTop: '3px solid #7A1229' }}>
               <div className="stat-label" style={{ color: 'var(--brand)' }}><CheckCircle size={13} /> 하원 완료</div>
               <div className="stat-value" style={{ color: 'var(--brand)' }}>{departedStudents}<span className="stat-unit">명</span></div>
             </div>
@@ -706,7 +706,7 @@ export default function AcademyDashboard() {
                     <button
                       type="button"
                       onClick={handleAddTextbook}
-                      style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 32, height: 32, borderRadius: 8, background: '#800020', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}
+                      style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 32, height: 32, borderRadius: 8, background: '#7A1229', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}
                     >
                       <Plus size={16} />
                     </button>
