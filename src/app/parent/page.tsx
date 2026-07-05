@@ -11,7 +11,7 @@ import CommunityBoard from "@/components/CommunityBoard";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
-  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users, Trash2
+  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users, Trash2, Phone
 } from "lucide-react";
 
 interface Student {
@@ -39,6 +39,13 @@ interface Announcement {
   academyId: string;
 }
 
+interface AcademyInfo {
+  academyName?: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+}
+
 export default function ParentDashboard() {
   const { user, role, profile, loading } = useAuth();
   const router = useRouter();
@@ -46,6 +53,7 @@ export default function ParentDashboard() {
   const [students, setStudents] = useState<Student[]>([]);
   const [homeworks, setHomeworks] = useState<Homework[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [academyInfoMap, setAcademyInfoMap] = useState<Record<string, AcademyInfo>>({});
   const prevStatuses = useRef<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"home" | "children" | "status" | "homework" | "announcements" | "calendar" | "community">("home");
   const [lastSeenAnnouncementsAt, setLastSeenAnnouncementsAt] = useState("");
@@ -173,9 +181,23 @@ export default function ParentDashboard() {
     [profile?.academyId, ...students.map(s => s.academyId)].filter((id): id is string => !!id)
   ));
   const academyLabel = (academyId: string) => {
+    const info = academyInfoMap[academyId];
+    if (info?.academyName) return info.academyName;
     const sibling = students.find(s => s.academyId === academyId);
     return sibling ? `${sibling.name} 학생과 같은 학원` : "등록된 학원";
   };
+
+  const childAcademyIdsKey = childAcademyIds.join(",");
+  useEffect(() => {
+    if (!childAcademyIdsKey) { setAcademyInfoMap({}); return; }
+    const ids = childAcademyIdsKey.split(",");
+    const unsubs = ids.map(id => onSnapshot(doc(db, "users", id), snap => {
+      if (!snap.exists()) return;
+      const data = snap.data() as AcademyInfo;
+      setAcademyInfoMap(prev => ({ ...prev, [id]: data }));
+    }));
+    return () => unsubs.forEach(u => u());
+  }, [childAcademyIdsKey]);
 
   const openAddChildModal = () => {
     setNewChildAcademyId(childAcademyIds[0] || "");
@@ -455,16 +477,29 @@ export default function ParentDashboard() {
 
               <div className="home-section-title"><Building2 size={14} /> 연결된 학원</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
-                {childAcademyIds.map(id => (
-                  <div key={id} className="home-child-card stagger-in">
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>{academyLabel(id)}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
-                        {students.filter(s => s.academyId === id).map(s => s.name).join(", ") || "등록된 자녀 없음"}
+                {childAcademyIds.map(id => {
+                  const info = academyInfoMap[id];
+                  return (
+                    <div key={id} className="home-child-card stagger-in">
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 14 }}>{academyLabel(id)}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                          {students.filter(s => s.academyId === id).map(s => s.name).join(", ") || "등록된 자녀 없음"}
+                        </div>
+                        {info?.name && (
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                            원장 {info.name}{info.phone ? ` · ${info.phone}` : ""}
+                          </div>
+                        )}
                       </div>
+                      {info?.phone && (
+                        <a href={`tel:${info.phone}`} className="btn btn-secondary btn-sm" style={{ gap: 4, display: 'inline-flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
+                          <Phone size={12} /> 전화
+                        </a>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 <button className="home-child-card" style={{ justifyContent: 'center', gap: 8, cursor: 'pointer', border: '1.5px dashed var(--border-strong)', color: 'var(--brand)', fontWeight: 700, fontSize: 13 }} onClick={openConnectModal}>
                   <KeyRound size={15} /> 새 학원 코드로 연결하기
                 </button>

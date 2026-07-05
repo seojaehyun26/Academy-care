@@ -11,7 +11,7 @@ import {
   Search, Users, CheckCircle, XCircle, LogOut, MessageCircle, BookOpen, Plus,
   Clock, UserCheck, CircleDashed, X, Trash2, Calendar as CalendarIcon, Megaphone,
   CalendarCheck, User, Book, FileText, Library, GraduationCap, Phone, Mail,
-  ShieldCheck, KeyRound, Copy, Home, Users2
+  ShieldCheck, KeyRound, Copy, Home, Users2, Building2
 } from "lucide-react";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
@@ -91,6 +91,11 @@ export default function AcademyDashboard() {
   const [codeCopied, setCodeCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<"home" | "students" | "parents" | "homework" | "announcements" | "consultations" | "approvals" | "community">("home");
 
+  const [academyNameInput, setAcademyNameInput] = useState("");
+  const [academyPhoneInput, setAcademyPhoneInput] = useState("");
+  const [savingInfo, setSavingInfo] = useState(false);
+  const [infoSaved, setInfoSaved] = useState(false);
+
   useEffect(() => {
     if (!loading && (!user || role !== "academy")) router.push("/");
   }, [user, role, loading, router]);
@@ -110,6 +115,31 @@ export default function AcademyDashboard() {
       })();
     }
   }, [user, role, profile]);
+
+  // Seed the editable fields from the profile once it loads, without
+  // clobbering whatever the director is actively typing on later re-renders.
+  useEffect(() => {
+    if (profile) {
+      setAcademyNameInput(profile.academyName ?? "");
+      setAcademyPhoneInput(profile.phone ?? "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.academyName, profile?.phone]);
+
+  const saveAcademyInfo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setSavingInfo(true);
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        academyName: academyNameInput.trim(),
+        phone: academyPhoneInput.trim(),
+      });
+      setInfoSaved(true);
+      setTimeout(() => setInfoSaved(false), 1500);
+    } catch (e) { console.error(e); }
+    finally { setSavingInfo(false); }
+  };
 
   useEffect(() => {
     if (user && role === "academy") {
@@ -341,7 +371,7 @@ export default function AcademyDashboard() {
           </div>
           <div>
             <div className="sidebar-brand-text">Academy Care</div>
-            <div className="sidebar-brand-sub">원장 관리자</div>
+            <div className="sidebar-brand-sub">{profile?.academyName || "원장 관리자"}</div>
           </div>
         </div>
 
@@ -479,15 +509,33 @@ export default function AcademyDashboard() {
               <div className="two-col-grid">
                 <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                   <div className="card-header">
-                    <div className="card-title"><KeyRound size={15} /> 학원 코드</div>
-                  </div>
-                  <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ flex: 1, padding: '12px 16px', borderRadius: 12, background: 'var(--bg)', border: '1.5px dashed var(--border-strong)', fontSize: 22, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
-                      {profile?.joinCode || '생성 중...'}
+                    <div>
+                      <div className="card-title"><Building2 size={15} /> 학원 정보</div>
+                      <div className="card-subtitle">학부모 화면에 표시되는 학원 이름·연락처예요</div>
                     </div>
-                    <button className="btn btn-secondary" onClick={copyJoinCode} disabled={!profile?.joinCode}>
-                      <Copy size={14} /> {codeCopied ? '복사됨!' : '복사'}
-                    </button>
+                  </div>
+                  <div className="card-body">
+                    <form onSubmit={saveAcademyInfo} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <div className="input-group">
+                        <label className="input-label">학원 이름</label>
+                        <input className="input" placeholder="예: 김샘 영어학원" value={academyNameInput} onChange={e => setAcademyNameInput(e.target.value)} />
+                      </div>
+                      <div className="input-group">
+                        <label className="input-label">연락처</label>
+                        <input className="input" placeholder="예: 02-1234-5678" value={academyPhoneInput} onChange={e => setAcademyPhoneInput(e.target.value)} />
+                      </div>
+                      <button type="submit" className="btn btn-primary btn-sm" disabled={savingInfo}>
+                        <CheckCircle size={14} /> {infoSaved ? '저장됨!' : savingInfo ? '저장 중...' : '저장하기'}
+                      </button>
+                    </form>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--surface-2)' }}>
+                      <div style={{ flex: 1, padding: '10px 14px', borderRadius: 12, background: 'var(--surface-2)', fontSize: 18, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
+                        {profile?.joinCode || '생성 중...'}
+                      </div>
+                      <button className="btn btn-secondary btn-sm" onClick={copyJoinCode} disabled={!profile?.joinCode}>
+                        <Copy size={13} /> {codeCopied ? '복사됨!' : '복사'}
+                      </button>
+                    </div>
                   </div>
                 </div>
 

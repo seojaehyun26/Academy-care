@@ -13,6 +13,7 @@ export interface UserProfile {
   phone?: string;
   role?: Role;
   academyId?: string;
+  academyName?: string;
   approved?: boolean;
   rejected?: boolean;
   joinCode?: string;

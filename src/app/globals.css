@@ -1574,8 +1574,8 @@ img { display: block; max-width: 100%; }
 .home-child-card {
   padding: 16px 18px;
   border-radius: var(--r-lg);
-  border: 1px solid var(--border);
   background: var(--surface);
+  box-shadow: var(--shadow-xs);
   display: flex;
   align-items: center;
   justify-content: space-between;
