@@ -89,7 +89,7 @@ export default function AcademyDashboard() {
   const [parentSearch, setParentSearch] = useState("");
   const [linkedParents, setLinkedParents] = useState<LinkedParent[]>([]);
   const [codeCopied, setCodeCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"home" | "students" | "parents" | "homework" | "announcements" | "consultations" | "approvals" | "community">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "info" | "students" | "parents" | "homework" | "announcements" | "consultations" | "approvals" | "community">("home");
 
   const [academyNameInput, setAcademyNameInput] = useState("");
   const [academyPhoneInput, setAcademyPhoneInput] = useState("");
@@ -346,6 +346,7 @@ export default function AcademyDashboard() {
 
   const navItems = [
     { id: "home", label: "홈", icon: <Home size={17} />, mobileIcon: <Home size={20} /> },
+    { id: "info", label: "학원 정보", icon: <Building2 size={17} />, mobileIcon: <Building2 size={20} /> },
     { id: "students", label: "원생 출결", icon: <Users size={17} />, mobileIcon: <Users size={20} /> },
     { id: "parents", label: "학부모 목록", icon: <User size={17} />, mobileIcon: <User size={20} /> },
     { id: "homework", label: "과제·교재", icon: <BookOpen size={17} />, mobileIcon: <BookOpen size={20} /> },
@@ -504,58 +505,68 @@ export default function AcademyDashboard() {
                     <div className="home-quick-card-sub">학부모와 소통</div>
                   </div>
                 </button>
+                <button className="home-quick-card" onClick={() => setActiveTab("info")}>
+                  <div className="home-quick-card-icon"><Building2 size={17} /></div>
+                  <div>
+                    <div className="home-quick-card-label">학원 정보</div>
+                    <div className="home-quick-card-sub">이름·연락처·학원 코드</div>
+                  </div>
+                </button>
               </div>
 
-              <div className="two-col-grid">
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                  <div className="card-header">
-                    <div>
-                      <div className="card-title"><Building2 size={15} /> 학원 정보</div>
-                      <div className="card-subtitle">학부모 화면에 표시되는 학원 이름·연락처예요</div>
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="card-header">
+                  <div className="card-title"><Megaphone size={15} /> 최근 공지사항</div>
+                </div>
+                <div className="card-body">
+                  {announcements.length === 0 ? (
+                    <div className="empty-state" style={{ padding: '20px 0' }}>등록된 공지사항이 없습니다.</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {announcements.slice(0, 3).map(ann => (
+                        <div key={ann.id} style={{ fontSize: 13 }}>
+                          <div style={{ fontWeight: 700, marginBottom: 2 }}>{ann.title}</div>
+                          <div style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{ann.content}</div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                  <div className="card-body">
-                    <form onSubmit={saveAcademyInfo} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      <div className="input-group">
-                        <label className="input-label">학원 이름</label>
-                        <input className="input" placeholder="예: 김샘 영어학원" value={academyNameInput} onChange={e => setAcademyNameInput(e.target.value)} />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">연락처</label>
-                        <input className="input" placeholder="예: 02-1234-5678" value={academyPhoneInput} onChange={e => setAcademyPhoneInput(e.target.value)} />
-                      </div>
-                      <button type="submit" className="btn btn-primary btn-sm" disabled={savingInfo}>
-                        <CheckCircle size={14} /> {infoSaved ? '저장됨!' : savingInfo ? '저장 중...' : '저장하기'}
-                      </button>
-                    </form>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--surface-2)' }}>
-                      <div style={{ flex: 1, padding: '10px 14px', borderRadius: 12, background: 'var(--surface-2)', fontSize: 18, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
-                        {profile?.joinCode || '생성 중...'}
-                      </div>
-                      <button className="btn btn-secondary btn-sm" onClick={copyJoinCode} disabled={!profile?.joinCode}>
-                        <Copy size={13} /> {codeCopied ? '복사됨!' : '복사'}
-                      </button>
-                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Info Tab */}
+          {activeTab === "info" && (
+            <div className="animate-fade-up">
+              <div className="card" style={{ padding: 0, overflow: 'hidden', maxWidth: 480 }}>
+                <div className="card-header">
+                  <div>
+                    <div className="card-title"><Building2 size={15} /> 학원 정보</div>
+                    <div className="card-subtitle">학부모 화면에 표시되는 학원 이름·연락처예요</div>
                   </div>
                 </div>
-
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                  <div className="card-header">
-                    <div className="card-title"><Megaphone size={15} /> 최근 공지사항</div>
-                  </div>
-                  <div className="card-body">
-                    {announcements.length === 0 ? (
-                      <div className="empty-state" style={{ padding: '20px 0' }}>등록된 공지사항이 없습니다.</div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        {announcements.slice(0, 3).map(ann => (
-                          <div key={ann.id} style={{ fontSize: 13 }}>
-                            <div style={{ fontWeight: 700, marginBottom: 2 }}>{ann.title}</div>
-                            <div style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{ann.content}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                <div className="card-body">
+                  <form onSubmit={saveAcademyInfo} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div className="input-group">
+                      <label className="input-label">학원 이름</label>
+                      <input className="input" placeholder="예: 김샘 영어학원" value={academyNameInput} onChange={e => setAcademyNameInput(e.target.value)} />
+                    </div>
+                    <div className="input-group">
+                      <label className="input-label">연락처</label>
+                      <input className="input" placeholder="예: 02-1234-5678" value={academyPhoneInput} onChange={e => setAcademyPhoneInput(e.target.value)} />
+                    </div>
+                    <button type="submit" className="btn btn-primary btn-sm" disabled={savingInfo}>
+                      <CheckCircle size={14} /> {infoSaved ? '저장됨!' : savingInfo ? '저장 중...' : '저장하기'}
+                    </button>
+                  </form>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--surface-2)' }}>
+                    <div style={{ flex: 1, padding: '10px 14px', borderRadius: 12, background: 'var(--surface-2)', fontSize: 18, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
+                      {profile?.joinCode || '생성 중...'}
+                    </div>
+                    <button className="btn btn-secondary btn-sm" onClick={copyJoinCode} disabled={!profile?.joinCode}>
+                      <Copy size={13} /> {codeCopied ? '복사됨!' : '복사'}
+                    </button>
                   </div>
                 </div>
               </div>
