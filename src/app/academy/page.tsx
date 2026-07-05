@@ -93,6 +93,7 @@ export default function AcademyDashboard() {
 
   const [academyNameInput, setAcademyNameInput] = useState("");
   const [academyPhoneInput, setAcademyPhoneInput] = useState("");
+  const [academyIntroInput, setAcademyIntroInput] = useState("");
   const [savingInfo, setSavingInfo] = useState(false);
   const [infoSaved, setInfoSaved] = useState(false);
 
@@ -122,9 +123,10 @@ export default function AcademyDashboard() {
     if (profile) {
       setAcademyNameInput(profile.academyName ?? "");
       setAcademyPhoneInput(profile.phone ?? "");
+      setAcademyIntroInput(profile.academyIntro ?? "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.academyName, profile?.phone]);
+  }, [profile?.academyName, profile?.phone, profile?.academyIntro]);
 
   const saveAcademyInfo = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,6 +136,7 @@ export default function AcademyDashboard() {
       await updateDoc(doc(db, "users", user.uid), {
         academyName: academyNameInput.trim(),
         phone: academyPhoneInput.trim(),
+        academyIntro: academyIntroInput.trim(),
       });
       setInfoSaved(true);
       setTimeout(() => setInfoSaved(false), 1500);
@@ -538,36 +541,87 @@ export default function AcademyDashboard() {
 
           {/* Info Tab */}
           {activeTab === "info" && (
-            <div className="animate-fade-up">
-              <div className="card" style={{ padding: 0, overflow: 'hidden', maxWidth: 480 }}>
+            <div className="animate-fade-up" style={{ maxWidth: 480, margin: '0 auto' }}>
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="card-header">
+                  <div className="card-title"><Building2 size={15} /> 학원 정보</div>
+                  <button type="submit" form="academy-info-form" className="btn btn-primary btn-sm" disabled={savingInfo}>
+                    {infoSaved ? '저장됨!' : savingInfo ? '저장 중...' : '저장'}
+                  </button>
+                </div>
+
+                <form id="academy-info-form" onSubmit={saveAcademyInfo}>
+                  <div style={{ textAlign: 'center', padding: '28px 24px 8px' }}>
+                    <div className="profile-avatar-lg">
+                      {academyNameInput.trim() ? academyNameInput.trim()[0].toUpperCase() : <GraduationCap size={30} />}
+                    </div>
+                    <input
+                      className="profile-name-input"
+                      placeholder="학원 이름을 입력하세요"
+                      value={academyNameInput}
+                      onChange={e => setAcademyNameInput(e.target.value)}
+                    />
+                    <div className="profile-name-hint">학부모 화면 상단에 이 이름으로 표시돼요</div>
+                  </div>
+
+                  <div className="profile-field-list">
+                    <div className="profile-field-row">
+                      <div className="profile-field-icon"><Phone size={16} /></div>
+                      <div className="profile-field-body">
+                        <div className="profile-field-label">연락처</div>
+                        <input
+                          className="profile-field-input"
+                          placeholder="02-1234-5678"
+                          value={academyPhoneInput}
+                          onChange={e => setAcademyPhoneInput(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="profile-field-row">
+                      <div className="profile-field-icon"><FileText size={16} /></div>
+                      <div className="profile-field-body">
+                        <div className="profile-field-label">한 줄 소개</div>
+                        <input
+                          className="profile-field-input"
+                          placeholder="학원을 한 줄로 소개해보세요"
+                          value={academyIntroInput}
+                          onChange={e => setAcademyIntroInput(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div className="card" style={{ padding: 0, overflow: 'hidden', marginTop: 16 }}>
                 <div className="card-header">
                   <div>
-                    <div className="card-title"><Building2 size={15} /> 학원 정보</div>
-                    <div className="card-subtitle">학부모 화면에 표시되는 학원 이름·연락처예요</div>
+                    <div className="card-title"><KeyRound size={15} /> 학원 코드</div>
+                    <div className="card-subtitle">학부모 가입 시 이 코드를 입력하면 우리 학원과 연동돼요</div>
                   </div>
                 </div>
-                <div className="card-body">
-                  <form onSubmit={saveAcademyInfo} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div className="input-group">
-                      <label className="input-label">학원 이름</label>
-                      <input className="input" placeholder="예: 김샘 영어학원" value={academyNameInput} onChange={e => setAcademyNameInput(e.target.value)} />
-                    </div>
-                    <div className="input-group">
-                      <label className="input-label">연락처</label>
-                      <input className="input" placeholder="예: 02-1234-5678" value={academyPhoneInput} onChange={e => setAcademyPhoneInput(e.target.value)} />
-                    </div>
-                    <button type="submit" className="btn btn-primary btn-sm" disabled={savingInfo}>
-                      <CheckCircle size={14} /> {infoSaved ? '저장됨!' : savingInfo ? '저장 중...' : '저장하기'}
-                    </button>
-                  </form>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--surface-2)' }}>
-                    <div style={{ flex: 1, padding: '10px 14px', borderRadius: 12, background: 'var(--surface-2)', fontSize: 18, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
-                      {profile?.joinCode || '생성 중...'}
-                    </div>
-                    <button className="btn btn-secondary btn-sm" onClick={copyJoinCode} disabled={!profile?.joinCode}>
-                      <Copy size={13} /> {codeCopied ? '복사됨!' : '복사'}
-                    </button>
+                <div className="card-body" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ flex: 1, padding: '10px 14px', borderRadius: 12, background: 'var(--surface-2)', fontSize: 18, fontWeight: 800, letterSpacing: '0.15em', textAlign: 'center', color: 'var(--brand)' }}>
+                    {profile?.joinCode || '생성 중...'}
                   </div>
+                  <button className="btn btn-secondary btn-sm" onClick={copyJoinCode} disabled={!profile?.joinCode}>
+                    <Copy size={13} /> {codeCopied ? '복사됨!' : '복사'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="home-section-title" style={{ marginTop: 20 }}>학부모 화면에는 이렇게 보여요</div>
+              <div className="home-child-card">
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{academyNameInput.trim() || '등록된 학원'}</div>
+                  {academyIntroInput.trim() && (
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{academyIntroInput.trim()}</div>
+                  )}
+                  {(profile?.name || academyPhoneInput.trim()) && (
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                      원장 {profile?.name}{academyPhoneInput.trim() ? ` · ${academyPhoneInput.trim()}` : ""}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

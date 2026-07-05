@@ -1582,6 +1582,96 @@ img { display: block; max-width: 100%; }
   gap: 12px;
 }
 
+/* ---- Profile-style editing (학원 정보) ---- */
+.profile-avatar-lg {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 auto 14px;
+  box-shadow: var(--shadow-brand);
+}
+
+.profile-name-input {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  border: none;
+  background: none;
+  outline: none;
+  font-family: inherit;
+  padding: 6px 12px;
+  border-radius: var(--r-md);
+  transition: background 0.15s;
+}
+
+.profile-name-input:focus { background: var(--surface-2); }
+.profile-name-input::placeholder { color: var(--text-muted); font-weight: 700; }
+
+.profile-name-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  padding-bottom: 8px;
+}
+
+.profile-field-list {
+  border-top: 1px solid var(--surface-2);
+}
+
+.profile-field-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.profile-field-row:last-child { border-bottom: none; }
+
+.profile-field-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-field-body { flex: 1; min-width: 0; }
+
+.profile-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.profile-field-input {
+  width: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text-primary);
+  padding: 0;
+}
+
+.profile-field-input::placeholder { color: var(--text-muted); }
+
 /* ---- Community board ---- */
 .community-composer {
   display: flex;

@@ -14,6 +14,7 @@ export interface UserProfile {
   role?: Role;
   academyId?: string;
   academyName?: string;
+  academyIntro?: string;
   approved?: boolean;
   rejected?: boolean;
   joinCode?: string;

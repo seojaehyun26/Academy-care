@@ -41,6 +41,7 @@ interface Announcement {
 
 interface AcademyInfo {
   academyName?: string;
+  academyIntro?: string;
   name?: string;
   phone?: string;
   email?: string;
@@ -486,6 +487,9 @@ export default function ParentDashboard() {
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
                           {students.filter(s => s.academyId === id).map(s => s.name).join(", ") || "등록된 자녀 없음"}
                         </div>
+                        {info?.academyIntro && (
+                          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{info.academyIntro}</div>
+                        )}
                         {info?.name && (
                           <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
                             원장 {info.name}{info.phone ? ` · ${info.phone}` : ""}
