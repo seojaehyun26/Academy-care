@@ -18,7 +18,7 @@ interface Student {
   id: string;
   name: string;
   academyId: string;
-  status: "none" | "arrived" | "departed";
+  status: "none" | "arrived" | "departed" | "absent";
   feeStatus?: "paid" | "unpaid";
   lastUpdated: string;
 }
@@ -529,6 +529,11 @@ export default function ParentDashboard() {
                         <CheckCircle size={14} /> 하원 완료
                       </span>
                     )}
+                    {student.status === "absent" && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'var(--error)', color: 'white', fontWeight: 700, fontSize: 13 }}>
+                        <XCircle size={14} /> 결석
+                      </span>
+                    )}
                     {student.status === "none" && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'var(--bg)', color: 'var(--text-muted)', fontWeight: 700, fontSize: 13, border: '1px solid var(--border)' }}>
                         <CircleDashed size={14} /> 대기중
@@ -625,6 +630,7 @@ export default function ParentDashboard() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       {student.status === "arrived" && <span className="status-chip-arrived">등원중</span>}
                       {student.status === "departed" && <span className="status-chip-departed">하원완료</span>}
+                      {student.status === "absent" && <span className="status-chip-absent">결석</span>}
                       {student.status === "none" && <span className="status-chip-none">대기중</span>}
                       {student.feeStatus === "paid"
                         ? <span className="badge badge-success"><CheckCircle size={11} /> 원비 납부</span>
@@ -684,6 +690,11 @@ export default function ParentDashboard() {
                       {student.status === "departed" && (
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 999, background: 'linear-gradient(135deg, #7A1229, #4C0916)', color: 'white', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(128,0,32,0.3)' }}>
                           <CheckCircle size={18} /> 하원 완료
+                        </span>
+                      )}
+                      {student.status === "absent" && (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 999, background: 'var(--error)', color: 'white', fontWeight: 700, fontSize: 15 }}>
+                          <XCircle size={18} /> 결석
                         </span>
                       )}
                       {student.status === "none" && (

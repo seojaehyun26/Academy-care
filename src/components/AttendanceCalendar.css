@@ -110,9 +110,10 @@
   width: 0.375rem;
   height: 0.375rem;
   border-radius: 50%;
-  background-color: var(--accent);
   margin-top: 0.25rem;
 }
+.calendar-event-dot.attended { background-color: #2563EB; }
+.calendar-event-dot.absent { background-color: var(--error); }
 
 .calendar-details {
   background-color: var(--surface-2);
@@ -136,6 +137,7 @@
 }
 .calendar-detail-dot.arrived { background-color: var(--success); }
 .calendar-detail-dot.departed { background-color: var(--brand); }
+.calendar-detail-dot.absent { background-color: var(--error); }
 
 .calendar-detail-text {
   display: flex;

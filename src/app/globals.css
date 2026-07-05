@@ -1424,6 +1424,16 @@ img { display: block; max-width: 100%; }
   border: 1px solid var(--border);
 }
 
+.status-chip-absent {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--r-full);
+  background: var(--error-bg);
+  color: var(--error);
+  border: 1px solid var(--error-border);
+}
+
 /* Consultation item */
 .consult-item {
   padding: 16px;

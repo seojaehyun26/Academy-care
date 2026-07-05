@@ -20,7 +20,7 @@ interface Student {
   id: string;
   name: string;
   parentEmail: string;
-  status: "none" | "arrived" | "departed";
+  status: "none" | "arrived" | "departed" | "absent";
   feeStatus?: "paid" | "unpaid";
   lastUpdated: string;
 }
@@ -215,7 +215,7 @@ export default function AcademyDashboard() {
     } else setRecentHomeworks([]);
   }, [selectedStudent]);
 
-  const updateStatus = async (studentId: string, status: "arrived" | "departed" | "none") => {
+  const updateStatus = async (studentId: string, status: "arrived" | "departed" | "none" | "absent") => {
     try {
       const now = new Date();
       const ts = now.toISOString();
@@ -688,6 +688,7 @@ export default function AcademyDashboard() {
                             {student.name}
                             {student.status === "arrived" && <span className="status-chip-arrived">등원중</span>}
                             {student.status === "departed" && <span className="status-chip-departed">하원완료</span>}
+                            {student.status === "absent" && <span className="status-chip-absent">결석</span>}
                             {student.status === "none" && <span className="status-chip-none">대기중</span>}
                           </div>
                           <div className="student-row-meta">
@@ -714,6 +715,11 @@ export default function AcademyDashboard() {
                             className={`btn btn-sm ${student.status === "departed" ? "btn-primary" : "btn-secondary"}`}
                             onClick={() => updateStatus(student.id, "departed")}
                           >하원</button>
+                          <button
+                            className={`btn btn-sm ${student.status === "absent" ? "btn-primary" : "btn-secondary"}`}
+                            style={student.status === "absent" ? { background: 'var(--error)', boxShadow: 'none' } : {}}
+                            onClick={() => updateStatus(student.id, "absent")}
+                          >결석</button>
                           {student.status !== "none" && (
                             <button className="btn btn-ghost btn-sm" title="초기화" onClick={() => updateStatus(student.id, "none")}>
                               <XCircle size={15} />

@@ -12,7 +12,7 @@ import "./AttendanceCalendar.css"; // Import the vanilla CSS
 
 interface Log {
   id: string;
-  type: "arrived" | "departed";
+  type: "arrived" | "departed" | "absent";
   timestamp: string;
   dateString: string;
 }
@@ -97,15 +97,17 @@ export default function AttendanceCalendar({ studentId, studentName, onAddConsul
         
         const dayLogs = logs.filter(l => l.dateString === dateStr);
         dayLogs.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-        
+
         const arrivedLog = dayLogs.find(l => l.type === "arrived");
-        const departedLog = dayLogs.slice().reverse().find(l => l.type === "departed"); 
-        
+        const absentLog = dayLogs.find(l => l.type === "absent");
+
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isTodayDate = isToday(day);
         const isSelected = selectedDate && isSameDay(day, selectedDate);
-        
-        const hasEvents = arrivedLog || departedLog;
+
+        // Absence takes visual priority over an attendance mark on the
+        // same day — it's the more important thing for a parent to notice.
+        const dotVariant = absentLog ? "absent" : arrivedLog ? "attended" : null;
 
         let numClass = "calendar-date-num";
         if (isTodayDate) numClass += " today";
@@ -122,11 +124,11 @@ export default function AttendanceCalendar({ studentId, studentName, onAddConsul
               {formattedDate}
             </div>
 
-            {hasEvents && !isTodayDate && !isSelected && (
-              <div className="calendar-event-dot"></div>
-            )}
-            {hasEvents && (isTodayDate || isSelected) && (
-              <div className="calendar-event-dot" style={{backgroundColor: 'transparent'}}></div> 
+            {dotVariant && (
+              <div
+                className={`calendar-event-dot ${dotVariant}`}
+                style={(isTodayDate || isSelected) ? { backgroundColor: 'transparent' } : undefined}
+              />
             )}
           </div>
         );
@@ -170,9 +172,10 @@ export default function AttendanceCalendar({ studentId, studentName, onAddConsul
     dayLogs.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
     
     const arrivedLog = dayLogs.find(l => l.type === "arrived");
-    const departedLog = dayLogs.slice().reverse().find(l => l.type === "departed"); 
+    const departedLog = dayLogs.slice().reverse().find(l => l.type === "departed");
+    const absentLog = dayLogs.find(l => l.type === "absent");
 
-    if (!arrivedLog && !departedLog) {
+    if (!arrivedLog && !departedLog && !absentLog) {
       return (
         <div className="calendar-detail-item" style={{justifyContent: 'center'}}>
           <span style={{color: 'var(--text-muted)', fontSize: '0.875rem'}}>출결 기록이 없습니다.</span>
@@ -182,6 +185,15 @@ export default function AttendanceCalendar({ studentId, studentName, onAddConsul
 
     return (
       <div>
+        {absentLog && (
+          <div className="calendar-detail-item">
+            <div className="calendar-detail-dot absent"></div>
+            <div className="calendar-detail-text">
+              <span className="calendar-detail-title">결석 처리됨</span>
+              <span className="calendar-detail-time">{format(new Date(absentLog.timestamp), "a h:mm").replace('AM','오전').replace('PM','오후')}</span>
+            </div>
+          </div>
+        )}
         {arrivedLog && (
           <div className="calendar-detail-item">
             <div className="calendar-detail-dot arrived"></div>
