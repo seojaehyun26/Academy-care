@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
+import Reveal from "@/components/Reveal";
 
 interface Student {
   id: string;
@@ -517,7 +518,7 @@ export default function AcademyDashboard() {
                 </button>
               </div>
 
-              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              <Reveal className="card" style={{ padding: 0, overflow: 'hidden' }}>
                 <div className="card-header">
                   <div className="card-title"><Megaphone size={15} /> 최근 공지사항</div>
                 </div>
@@ -535,7 +536,7 @@ export default function AcademyDashboard() {
                     </div>
                   )}
                 </div>
-              </div>
+              </Reveal>
             </div>
           )}
 
@@ -593,7 +594,7 @@ export default function AcademyDashboard() {
                 </form>
               </div>
 
-              <div className="card" style={{ padding: 0, overflow: 'hidden', marginTop: 16 }}>
+              <Reveal className="card" style={{ padding: 0, overflow: 'hidden', marginTop: 16 }}>
                 <div className="card-header">
                   <div>
                     <div className="card-title"><KeyRound size={15} /> 학원 코드</div>
@@ -608,10 +609,10 @@ export default function AcademyDashboard() {
                     <Copy size={13} /> {codeCopied ? '복사됨!' : '복사'}
                   </button>
                 </div>
-              </div>
+              </Reveal>
 
               <div className="home-section-title" style={{ marginTop: 20 }}>학부모 화면에는 이렇게 보여요</div>
-              <div className="home-child-card">
+              <Reveal className="home-child-card">
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>{academyNameInput.trim() || '등록된 학원'}</div>
                   {academyIntroInput.trim() && (
@@ -623,7 +624,7 @@ export default function AcademyDashboard() {
                     </div>
                   )}
                 </div>
-              </div>
+              </Reveal>
             </div>
           )}
 
@@ -681,8 +682,8 @@ export default function AcademyDashboard() {
                     <input className="input" style={{ paddingLeft: 36 }} placeholder="이름으로 검색..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 420, overflowY: 'auto' }}>
-                    {filteredStudents.map(student => (
-                      <div key={student.id} className="student-row stagger-in">
+                    {filteredStudents.map((student, i) => (
+                      <Reveal key={student.id} className="student-row" delay={Math.min(i, 6) * 50}>
                         <div className="student-row-info">
                           <div className="student-row-name">
                             {student.name}
@@ -729,7 +730,7 @@ export default function AcademyDashboard() {
                             <Trash2 size={15} />
                           </button>
                         </div>
-                      </div>
+                      </Reveal>
                     ))}
                     {filteredStudents.length === 0 && (
                       <div className="empty-state">
@@ -758,8 +759,8 @@ export default function AcademyDashboard() {
                   <input className="input" style={{ paddingLeft: 36 }} placeholder="이름, 이메일, 전화번호로 검색..." value={parentSearch} onChange={e => setParentSearch(e.target.value)} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 500, overflowY: 'auto' }}>
-                  {filteredParents.map(parent => (
-                    <div key={parent.id} className="student-row stagger-in">
+                  {filteredParents.map((parent, i) => (
+                    <Reveal key={parent.id} className="student-row" delay={Math.min(i, 6) * 50}>
                       <div className="student-row-info">
                         <div className="student-row-name" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                           <span>{parent.name}</span>
@@ -786,7 +787,7 @@ export default function AcademyDashboard() {
                           </a>
                         )}
                       </div>
-                    </div>
+                    </Reveal>
                   ))}
                   {filteredParents.length === 0 && (
                     <div className="empty-state">
@@ -959,14 +960,14 @@ export default function AcademyDashboard() {
                   <div className="card-title"><Megaphone size={15} /> 등록된 공지사항</div>
                 </div>
                 <div className="card-body" style={{ maxHeight: 500, overflowY: 'auto' }}>
-                  {announcements.map(ann => (
-                    <div key={ann.id} className="announcement-item stagger-in">
+                  {announcements.map((ann, i) => (
+                    <Reveal key={ann.id} className="announcement-item" delay={Math.min(i, 6) * 50}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
                         <div className="announcement-title">{ann.title}</div>
                         <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0, marginLeft: 12 }}>{formatDate(ann.date)}</span>
                       </div>
                       <div className="announcement-content">{ann.content}</div>
-                    </div>
+                    </Reveal>
                   ))}
                   {announcements.length === 0 && <div className="empty-state">등록된 공지사항이 없습니다.</div>}
                 </div>
@@ -990,8 +991,8 @@ export default function AcademyDashboard() {
                   <div className="empty-state">접수된 상담 신청이 없습니다.</div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {consultations.map(cons => (
-                      <div key={cons.id} className="consult-item stagger-in">
+                    {consultations.map((cons, i) => (
+                      <Reveal key={cons.id} className="consult-item" delay={Math.min(i, 6) * 50}>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                             <span style={{ fontSize: 15, fontWeight: 600 }}>{cons.studentName} 학부모님</span>
@@ -1008,7 +1009,7 @@ export default function AcademyDashboard() {
                             확인
                           </button>
                         )}
-                      </div>
+                      </Reveal>
                     ))}
                   </div>
                 )}
@@ -1056,8 +1057,8 @@ export default function AcademyDashboard() {
                     <div className="empty-state">대기 중인 가입 신청이 없습니다.</div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      {pendingParents.map(p => (
-                        <div key={p.id} className="student-row stagger-in">
+                      {pendingParents.map((p, i) => (
+                        <Reveal key={p.id} className="student-row" delay={Math.min(i, 6) * 50}>
                           <div className="student-row-info">
                             <div className="student-row-name">{p.name || p.email}</div>
                             <div className="student-row-meta">
@@ -1074,7 +1075,7 @@ export default function AcademyDashboard() {
                               <XCircle size={14} /> 거절
                             </button>
                           </div>
-                        </div>
+                        </Reveal>
                       ))}
                     </div>
                   )}

@@ -7,6 +7,7 @@ import {
   doc, updateDoc, deleteDoc, arrayUnion, arrayRemove, increment
 } from "firebase/firestore";
 import { Heart, MessageCircle, Send, Trash2, Plus, Eye, X } from "lucide-react";
+import Reveal from "@/components/Reveal";
 
 type CategoryId = "free" | "question" | "info" | "praise" | "suggest";
 
@@ -208,7 +209,7 @@ export default function CommunityBoard({ academyIds, uid, displayName, role, get
           const isExpanded = expandedPostId === post.id;
           const cat = categoryMeta(post.category);
           return (
-            <div key={post.id} className="community-post stagger-in">
+            <Reveal key={post.id} className="community-post">
               <div className="community-post-head">
                 <div className="community-avatar">{post.authorName?.[0]?.toUpperCase() ?? "?"}</div>
                 <div style={{ flex: 1 }}>
@@ -276,7 +277,7 @@ export default function CommunityBoard({ academyIds, uid, displayName, role, get
                   </form>
                 </div>
               )}
-            </div>
+            </Reveal>
           );
         })
       )}

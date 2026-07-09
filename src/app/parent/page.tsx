@@ -8,6 +8,7 @@ import { collection, query, where, onSnapshot, addDoc, doc, getDoc, deleteDoc } 
 import { signOut } from "firebase/auth";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
+import Reveal from "@/components/Reveal";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
@@ -477,11 +478,11 @@ export default function ParentDashboard() {
               </div>
 
               <div className="home-section-title"><Building2 size={14} /> 연결된 학원</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
+              <Reveal style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
                 {childAcademyIds.map(id => {
                   const info = academyInfoMap[id];
                   return (
-                    <div key={id} className="home-child-card stagger-in">
+                    <div key={id} className="home-child-card">
                       <div>
                         <div style={{ fontWeight: 700, fontSize: 14 }}>{academyLabel(id)}</div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
@@ -507,12 +508,12 @@ export default function ParentDashboard() {
                 <button className="home-child-card" style={{ justifyContent: 'center', gap: 8, cursor: 'pointer', border: '1.5px dashed var(--border-strong)', color: 'var(--brand)', fontWeight: 700, fontSize: 13 }} onClick={openConnectModal}>
                   <KeyRound size={15} /> 새 학원 코드로 연결하기
                 </button>
-              </div>
+              </Reveal>
 
               <div className="home-section-title"><CircleDashed size={14} /> 자녀 출결 현황</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
+              <Reveal style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
                 {students.map(student => (
-                  <div key={student.id} className="home-child-card stagger-in">
+                  <div key={student.id} className="home-child-card">
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15 }}>{student.name}</div>
                       <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
@@ -544,10 +545,10 @@ export default function ParentDashboard() {
                 {students.length === 0 && (
                   <div className="card empty-state">등록된 자녀가 없습니다.</div>
                 )}
-              </div>
+              </Reveal>
 
               <div className="two-col-grid">
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <Reveal className="card" style={{ padding: 0, overflow: 'hidden' }}>
                   <div className="card-header">
                     <div className="card-title"><ClipboardList size={15} /> 최근 숙제</div>
                   </div>
@@ -571,9 +572,9 @@ export default function ParentDashboard() {
                       </div>
                     )}
                   </div>
-                </div>
+                </Reveal>
 
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <Reveal className="card" delay={100} style={{ padding: 0, overflow: 'hidden' }}>
                   <div className="card-header">
                     <div className="card-title"><Megaphone size={15} /> 최근 공지사항</div>
                   </div>
@@ -591,7 +592,7 @@ export default function ParentDashboard() {
                       </div>
                     )}
                   </div>
-                </div>
+                </Reveal>
               </div>
             </div>
           )}
@@ -621,8 +622,8 @@ export default function ParentDashboard() {
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {students.map(student => (
-                  <div key={student.id} className="card stagger-in" style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                {students.map((student, i) => (
+                  <Reveal key={student.id} className="card" delay={i * 60} style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
                     <div>
                       <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{student.name}</div>
                       <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{academyLabel(student.academyId)}</div>
@@ -640,7 +641,7 @@ export default function ParentDashboard() {
                         <Trash2 size={14} />
                       </button>
                     </div>
-                  </div>
+                  </Reveal>
                 ))}
                 {students.length === 0 && (
                   <div className="card empty-state">
@@ -673,8 +674,8 @@ export default function ParentDashboard() {
                 </div>
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {students.map(student => (
-                  <div key={student.id} className="card stagger-in" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                {students.map((student, i) => (
+                  <Reveal key={student.id} className="card" delay={i * 60} style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                     <div>
                       <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{student.name}</div>
                       <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>
@@ -703,7 +704,7 @@ export default function ParentDashboard() {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </Reveal>
                 ))}
                 {students.length === 0 && (
                   <div className="card empty-state">
@@ -736,10 +737,10 @@ export default function ParentDashboard() {
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {homeworks.map(hw => {
+                  {homeworks.map((hw, i) => {
                     const studentName = students.find(s => s.id === hw.studentId)?.name || "학생";
                     return (
-                      <div key={hw.id} className="card" style={{ padding: '20px 24px' }}>
+                      <Reveal key={hw.id} className="card" delay={Math.min(i, 6) * 50} style={{ padding: '20px 24px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <span style={{ fontSize: 15, fontWeight: 700 }}>{studentName}</span>
@@ -748,7 +749,7 @@ export default function ParentDashboard() {
                           <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{formatDate(hw.date)}</span>
                         </div>
                         <p style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{hw.description}</p>
-                      </div>
+                      </Reveal>
                     );
                   })}
                 </div>
@@ -767,14 +768,14 @@ export default function ParentDashboard() {
               ) : (
                 <div className="card">
                   <div className="card-body">
-                    {announcements.map(ann => (
-                      <div key={ann.id} className="announcement-item stagger-in">
+                    {announcements.map((ann, i) => (
+                      <Reveal key={ann.id} className="announcement-item" delay={Math.min(i, 6) * 50}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
                           <div className="announcement-title">{ann.title}</div>
                           <span style={{ fontSize: 11, color: 'var(--text-muted)', flexShrink: 0, marginLeft: 12 }}>{formatDate(ann.date)}</span>
                         </div>
                         <div className="announcement-content">{ann.content}</div>
-                      </div>
+                      </Reveal>
                     ))}
                   </div>
                 </div>
@@ -785,8 +786,8 @@ export default function ParentDashboard() {
           {/* Calendar Tab */}
           {activeTab === "calendar" && (
             <div className="animate-fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {students.map(student => (
-                <div key={student.id}>
+              {students.map((student, i) => (
+                <Reveal key={student.id} delay={i * 80}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-secondary)', marginBottom: 10 }}>{student.name} 출결 기록</div>
                   <AttendanceCalendar
                     studentId={student.id}
@@ -798,7 +799,7 @@ export default function ParentDashboard() {
                       setIsConsultModalOpen(true);
                     }}
                   />
-                </div>
+                </Reveal>
               ))}
               {students.length === 0 && (
                 <div className="card empty-state">등록된 자녀가 없습니다.</div>
