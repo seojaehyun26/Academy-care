@@ -226,7 +226,7 @@ export default function CommunityBoard({ academyIds, uid, displayName, role, get
                   </div>
                 </div>
                 {post.authorId === uid && (
-                  <button className="btn btn-ghost btn-xs" onClick={() => deletePost(post.id)} title="삭제">
+                  <button className="btn btn-ghost btn-xs btn-icon" onClick={() => deletePost(post.id)} title="삭제">
                     <Trash2 size={13} />
                   </button>
                 )}
@@ -255,7 +255,7 @@ export default function CommunityBoard({ academyIds, uid, displayName, role, get
                         <span className="community-comment-text">{c.content}</span>
                       </div>
                       {c.authorId === uid && (
-                        <button className="btn btn-ghost btn-xs" onClick={() => deleteComment(post.id, c.id)} title="삭제">
+                        <button className="btn btn-ghost btn-xs btn-icon" onClick={() => deleteComment(post.id, c.id)} title="삭제">
                           <Trash2 size={12} />
                         </button>
                       )}
@@ -291,7 +291,7 @@ export default function CommunityBoard({ academyIds, uid, displayName, role, get
           <div className="modal-box modal-box-md" onClick={e => e.stopPropagation()}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px 0" }}>
               <div style={{ fontSize: 16, fontWeight: 700 }}>글쓰기</div>
-              <button className="btn btn-ghost btn-sm" onClick={() => setIsComposeOpen(false)}><X size={16} /></button>
+              <button className="btn btn-ghost btn-sm btn-icon" onClick={() => setIsComposeOpen(false)}><X size={16} /></button>
             </div>
             <form onSubmit={submitPost} style={{ padding: "12px 20px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
               <div className="input-group">

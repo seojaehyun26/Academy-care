@@ -12,7 +12,7 @@ import Reveal from "@/components/Reveal";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
-  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users, Trash2, Phone
+  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users, Trash2, Phone, ChevronRight
 } from "lucide-react";
 
 interface Student {
@@ -572,6 +572,11 @@ export default function ParentDashboard() {
                       </div>
                     )}
                   </div>
+                  {homeworks.length > 0 && (
+                    <button className="btn btn-quiet" style={{ borderRadius: 0, borderTop: '1px solid var(--surface-2)' }} onClick={() => selectTab("homework")}>
+                      전체보기 <ChevronRight size={14} />
+                    </button>
+                  )}
                 </Reveal>
 
                 <Reveal className="card" delay={100} style={{ padding: 0, overflow: 'hidden' }}>
@@ -592,6 +597,11 @@ export default function ParentDashboard() {
                       </div>
                     )}
                   </div>
+                  {announcements.length > 0 && (
+                    <button className="btn btn-quiet" style={{ borderRadius: 0, borderTop: '1px solid var(--surface-2)' }} onClick={() => selectTab("announcements")}>
+                      전체보기 <ChevronRight size={14} />
+                    </button>
+                  )}
                 </Reveal>
               </div>
             </div>
@@ -637,7 +647,7 @@ export default function ParentDashboard() {
                         ? <span className="badge badge-success"><CheckCircle size={11} /> 원비 납부</span>
                         : <span className="badge badge-error">원비 미납</span>
                       }
-                      <button className="btn btn-ghost btn-sm" title="자녀 삭제" onClick={() => setDeletingStudent(student)}>
+                      <button className="btn btn-ghost btn-sm btn-icon" title="자녀 삭제" onClick={() => setDeletingStudent(student)}>
                         <Trash2 size={14} />
                       </button>
                     </div>

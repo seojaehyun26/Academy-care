@@ -11,7 +11,7 @@ import {
   Search, Users, CheckCircle, XCircle, LogOut, MessageCircle, BookOpen, Plus,
   Clock, UserCheck, CircleDashed, X, Trash2, Calendar as CalendarIcon, Megaphone,
   CalendarCheck, User, Book, FileText, Library, GraduationCap, Phone, Mail,
-  ShieldCheck, KeyRound, Copy, Home, Users2, Building2
+  ShieldCheck, KeyRound, Copy, Home, Users2, Building2, ChevronRight
 } from "lucide-react";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
@@ -536,6 +536,11 @@ export default function AcademyDashboard() {
                     </div>
                   )}
                 </div>
+                {announcements.length > 0 && (
+                  <button className="btn btn-quiet" style={{ borderRadius: 0, borderTop: '1px solid var(--surface-2)' }} onClick={() => setActiveTab("announcements")}>
+                    전체보기 <ChevronRight size={14} />
+                  </button>
+                )}
               </Reveal>
             </div>
           )}
@@ -722,11 +727,11 @@ export default function AcademyDashboard() {
                             onClick={() => updateStatus(student.id, "absent")}
                           >결석</button>
                           {student.status !== "none" && (
-                            <button className="btn btn-ghost btn-sm" title="초기화" onClick={() => updateStatus(student.id, "none")}>
+                            <button className="btn btn-ghost btn-sm btn-icon" title="초기화" onClick={() => updateStatus(student.id, "none")}>
                               <XCircle size={15} />
                             </button>
                           )}
-                          <button className="btn btn-ghost btn-sm" title="원생 삭제" onClick={() => setDeletingStudent(student)}>
+                          <button className="btn btn-ghost btn-sm btn-icon" title="원생 삭제" onClick={() => setDeletingStudent(student)}>
                             <Trash2 size={15} />
                           </button>
                         </div>
