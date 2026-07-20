@@ -16,6 +16,8 @@ import {
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
 import Reveal from "@/components/Reveal";
+import AcademyHeroCard from "@/components/AcademyHeroCard";
+import AcademyPromoBoard from "@/components/AcademyPromoBoard";
 
 interface Student {
   id: string;
@@ -350,7 +352,7 @@ export default function AcademyDashboard() {
 
   const navItems = [
     { id: "home", label: "홈", icon: <Home size={17} />, mobileIcon: <Home size={20} /> },
-    { id: "info", label: "학원 정보", icon: <Building2 size={17} />, mobileIcon: <Building2 size={20} /> },
+    { id: "info", label: "학원 프로필", icon: <Building2 size={17} />, mobileIcon: <Building2 size={20} /> },
     { id: "students", label: "원생 출결", icon: <Users size={17} />, mobileIcon: <Users size={20} /> },
     { id: "parents", label: "학부모 목록", icon: <User size={17} />, mobileIcon: <User size={20} /> },
     { id: "homework", label: "과제·교재", icon: <BookOpen size={17} />, mobileIcon: <BookOpen size={20} /> },
@@ -512,8 +514,8 @@ export default function AcademyDashboard() {
                 <button className="home-quick-card" onClick={() => setActiveTab("info")}>
                   <div className="home-quick-card-icon"><Building2 size={17} /></div>
                   <div>
-                    <div className="home-quick-card-label">학원 정보</div>
-                    <div className="home-quick-card-sub">이름·연락처·학원 코드</div>
+                    <div className="home-quick-card-label">학원 프로필</div>
+                    <div className="home-quick-card-sub">소개글·연락처·학원 코드</div>
                   </div>
                 </button>
               </div>
@@ -617,19 +619,17 @@ export default function AcademyDashboard() {
               </Reveal>
 
               <div className="home-section-title" style={{ marginTop: 20 }}>학부모 화면에는 이렇게 보여요</div>
-              <Reveal className="home-child-card">
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 14 }}>{academyNameInput.trim() || '등록된 학원'}</div>
-                  {academyIntroInput.trim() && (
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{academyIntroInput.trim()}</div>
-                  )}
-                  {(profile?.name || academyPhoneInput.trim()) && (
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
-                      원장 {profile?.name}{academyPhoneInput.trim() ? ` · ${academyPhoneInput.trim()}` : ""}
-                    </div>
-                  )}
-                </div>
+              <Reveal>
+                <AcademyHeroCard
+                  name={academyNameInput}
+                  intro={academyIntroInput}
+                  directorName={profile?.name}
+                  phone={academyPhoneInput}
+                />
               </Reveal>
+
+              <div className="home-section-title" style={{ marginTop: 24 }}><Megaphone size={14} /> 학원 소개글 (홍보)</div>
+              <AcademyPromoBoard academyId={user.uid} isOwner uid={user.uid} authorName={academyNameInput.trim() || profile?.name || "학원"} />
             </div>
           )}
 

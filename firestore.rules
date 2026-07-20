@@ -107,5 +107,18 @@ service cloud.firestore {
           && resource.data.authorId == request.auth.uid;
       }
     }
+
+    // Academy self-promotion posts (Naver-blog-style profile feed). Any
+    // signed-in user can read; only the owning academy can write its own.
+    match /academyPosts/{postId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.academyId == request.auth.uid
+        && request.resource.data.authorId == request.auth.uid;
+      allow update: if request.auth != null
+        && resource.data.academyId == request.auth.uid;
+      allow delete: if request.auth != null
+        && resource.data.academyId == request.auth.uid;
+    }
   }
 }

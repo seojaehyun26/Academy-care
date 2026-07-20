@@ -9,10 +9,12 @@ import { signOut } from "firebase/auth";
 import AttendanceCalendar from "@/components/AttendanceCalendar";
 import CommunityBoard from "@/components/CommunityBoard";
 import Reveal from "@/components/Reveal";
+import AcademyHeroCard from "@/components/AcademyHeroCard";
+import AcademyPromoBoard from "@/components/AcademyPromoBoard";
 import {
   MessageCircle, Megaphone, CalendarPlus, X, CheckCircle, CreditCard,
   PhoneCall, GraduationCap, CircleDashed, BookOpen, LogOut, Bell, ClipboardList, UserPlus,
-  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users, Trash2, Phone, ChevronRight
+  Clock, XCircle, Home, Users2, KeyRound, Building2, Link2, Users, Trash2, ChevronRight
 } from "lucide-react";
 
 interface Student {
@@ -57,7 +59,8 @@ export default function ParentDashboard() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [academyInfoMap, setAcademyInfoMap] = useState<Record<string, AcademyInfo>>({});
   const prevStatuses = useRef<Record<string, string>>({});
-  const [activeTab, setActiveTab] = useState<"home" | "children" | "status" | "homework" | "announcements" | "calendar" | "community">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "children" | "status" | "homework" | "announcements" | "calendar" | "community" | "profile">("home");
+  const [profileAcademyId, setProfileAcademyId] = useState("");
   const [lastSeenAnnouncementsAt, setLastSeenAnnouncementsAt] = useState("");
 
   const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
@@ -92,7 +95,7 @@ export default function ParentDashboard() {
     a => !lastSeenAnnouncementsAt || new Date(a.date).getTime() > new Date(lastSeenAnnouncementsAt).getTime()
   ).length;
 
-  const selectTab = (id: "home" | "children" | "status" | "homework" | "announcements" | "calendar" | "community") => {
+  const selectTab = (id: "home" | "children" | "status" | "homework" | "announcements" | "calendar" | "community" | "profile") => {
     setActiveTab(id);
     if (id === "announcements" && user) {
       const now = new Date().toISOString();
@@ -201,6 +204,13 @@ export default function ParentDashboard() {
     return () => unsubs.forEach(u => u());
   }, [childAcademyIdsKey]);
 
+  useEffect(() => {
+    if (childAcademyIds.length > 0 && !childAcademyIds.includes(profileAcademyId)) {
+      setProfileAcademyId(childAcademyIds[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [childAcademyIdsKey]);
+
   const openAddChildModal = () => {
     setNewChildAcademyId(childAcademyIds[0] || "");
     setIsAddChildModalOpen(true);
@@ -222,6 +232,11 @@ export default function ParentDashboard() {
       setIsAddChildModalOpen(false);
       setNewChildName("");
     } catch (e) { console.error(e); }
+  };
+
+  const openAcademyProfile = (academyId: string) => {
+    setProfileAcademyId(academyId);
+    selectTab("profile");
   };
 
   const openConnectModal = () => {
@@ -327,6 +342,7 @@ export default function ParentDashboard() {
 
   const navItems = [
     { id: "home", label: "홈", icon: <Home size={17} />, mobileIcon: <Home size={20} /> },
+    { id: "profile", label: "학원 프로필", icon: <Building2 size={17} />, mobileIcon: <Building2 size={20} /> },
     { id: "children", label: "자녀 관리", icon: <Users size={17} />, mobileIcon: <Users size={20} /> },
     { id: "status", label: "실시간 출결", icon: <CircleDashed size={17} />, mobileIcon: <CircleDashed size={20} /> },
     { id: "homework", label: "숙제 알림", icon: <ClipboardList size={17} />, mobileIcon: <ClipboardList size={20} /> },
@@ -478,37 +494,35 @@ export default function ParentDashboard() {
               </div>
 
               <div className="home-section-title"><Building2 size={14} /> 연결된 학원</div>
-              <Reveal style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
-                {childAcademyIds.map(id => {
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 22 }}>
+                {childAcademyIds.map((id, i) => {
                   const info = academyInfoMap[id];
                   return (
-                    <div key={id} className="home-child-card">
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: 14 }}>{academyLabel(id)}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
-                          {students.filter(s => s.academyId === id).map(s => s.name).join(", ") || "등록된 자녀 없음"}
-                        </div>
-                        {info?.academyIntro && (
-                          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{info.academyIntro}</div>
-                        )}
-                        {info?.name && (
-                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
-                            원장 {info.name}{info.phone ? ` · ${info.phone}` : ""}
-                          </div>
-                        )}
+                    <Reveal key={id} delay={Math.min(i, 6) * 50}>
+                      <div onClick={() => openAcademyProfile(id)} style={{ cursor: 'pointer' }}>
+                        <AcademyHeroCard
+                          compact
+                          name={academyLabel(id)}
+                          intro={info?.academyIntro}
+                          directorName={info?.name}
+                          phone={info?.phone}
+                        />
                       </div>
-                      {info?.phone && (
-                        <a href={`tel:${info.phone}`} className="btn btn-secondary btn-sm" style={{ gap: 4, display: 'inline-flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
-                          <Phone size={12} /> 전화
-                        </a>
-                      )}
-                    </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 4px 0' }}>
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                          {students.filter(s => s.academyId === id).map(s => s.name).join(", ") || "등록된 자녀 없음"}
+                        </span>
+                        <button className="btn btn-quiet btn-sm" onClick={() => openAcademyProfile(id)}>
+                          프로필 보기 <ChevronRight size={13} />
+                        </button>
+                      </div>
+                    </Reveal>
                   );
                 })}
                 <button className="home-child-card" style={{ justifyContent: 'center', gap: 8, cursor: 'pointer', border: '1.5px dashed var(--border-strong)', color: 'var(--brand)', fontWeight: 700, fontSize: 13 }} onClick={openConnectModal}>
                   <KeyRound size={15} /> 새 학원 코드로 연결하기
                 </button>
-              </Reveal>
+              </div>
 
               <div className="home-section-title"><CircleDashed size={14} /> 자녀 출결 현황</div>
               <Reveal style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 22 }}>
@@ -604,6 +618,45 @@ export default function ParentDashboard() {
                   )}
                 </Reveal>
               </div>
+            </div>
+          )}
+
+          {/* Academy Profile Tab */}
+          {activeTab === "profile" && (
+            <div className="animate-fade-up" style={{ maxWidth: 480, margin: '0 auto' }}>
+              {childAcademyIds.length === 0 ? (
+                <div className="card empty-state">학원과 연결한 후 프로필을 확인할 수 있습니다.</div>
+              ) : (
+                <>
+                  {childAcademyIds.length > 1 && (
+                    <div className="category-filter-row">
+                      {childAcademyIds.map(id => (
+                        <button
+                          key={id}
+                          className={`category-chip ${profileAcademyId === id ? "active" : ""}`}
+                          onClick={() => setProfileAcademyId(id)}
+                        >
+                          {academyLabel(id)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {profileAcademyId && (
+                    <>
+                      <Reveal>
+                        <AcademyHeroCard
+                          name={academyLabel(profileAcademyId)}
+                          intro={academyInfoMap[profileAcademyId]?.academyIntro}
+                          directorName={academyInfoMap[profileAcademyId]?.name}
+                          phone={academyInfoMap[profileAcademyId]?.phone}
+                        />
+                      </Reveal>
+                      <div className="home-section-title" style={{ marginTop: 24 }}><Megaphone size={14} /> 학원 소개</div>
+                      <AcademyPromoBoard academyId={profileAcademyId} isOwner={false} />
+                    </>
+                  )}
+                </>
+              )}
             </div>
           )}
 
