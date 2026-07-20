@@ -1584,8 +1584,9 @@ img { display: block; max-width: 100%; }
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--brand-light);
-  color: var(--brand);
+  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+  color: white;
+  box-shadow: 0 4px 10px rgba(148, 58, 31, 0.28);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1594,11 +1595,6 @@ img { display: block; max-width: 100%; }
 }
 
 .home-quick-card:hover .home-quick-card-icon { transform: scale(1.08); }
-
-.home-quick-card-icon.charcoal { background: var(--tone-charcoal); color: var(--tone-charcoal-fg); }
-.home-quick-card-icon.rust-deep { background: var(--tone-rust-deep); color: var(--tone-rust-deep-fg); }
-.home-quick-card-icon.charcoal-deep { background: var(--tone-charcoal-deep); color: var(--tone-charcoal-deep-fg); }
-.home-quick-card-icon.rust { background: var(--tone-rust); color: var(--tone-rust-fg); }
 
 .home-quick-card-label {
   font-size: 13px;
@@ -1693,8 +1689,8 @@ img { display: block; max-width: 100%; }
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--surface-2);
-  color: var(--text-secondary);
+  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -441,28 +441,28 @@ export default function ParentDashboard() {
 
               <div className="home-quick-grid">
                 <button className="home-quick-card" onClick={() => selectTab("announcements")}>
-                  <div className="home-quick-card-icon charcoal"><Bell size={17} /></div>
+                  <div className="home-quick-card-icon"><Bell size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">공지사항</div>
                     <div className="home-quick-card-sub">{unreadAnnouncements > 0 ? `안 읽은 공지 ${unreadAnnouncements}건` : "새 공지 없음"}</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setIsConsultModalOpen(true)}>
-                  <div className="home-quick-card-icon rust"><PhoneCall size={17} /></div>
+                  <div className="home-quick-card-icon"><PhoneCall size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">상담 신청</div>
                     <div className="home-quick-card-sub">원장님께 상담 요청</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setIsFeeModalOpen(true)}>
-                  <div className="home-quick-card-icon rust-deep"><CreditCard size={17} /></div>
+                  <div className="home-quick-card-icon"><CreditCard size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">원비 확인</div>
                     <div className="home-quick-card-sub">납부 현황 확인하기</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => selectTab("community")}>
-                  <div className="home-quick-card-icon charcoal-deep"><Users2 size={17} /></div>
+                  <div className="home-quick-card-icon"><Users2 size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">커뮤니티</div>
                     <div className="home-quick-card-sub">학부모·원장님과 소통</div>
