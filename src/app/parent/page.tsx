@@ -276,7 +276,7 @@ export default function ParentDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -295,7 +295,7 @@ export default function ParentDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center', maxWidth: 360, padding: 24 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <XCircle size={28} color="white" />
           </div>
           <p style={{ fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>가입이 거절되었습니다</p>
@@ -312,7 +312,7 @@ export default function ParentDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center', maxWidth: 360, padding: 24 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <Clock size={28} color="white" />
           </div>
           <p style={{ fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>원장님 승인 대기 중입니다</p>
@@ -441,28 +441,28 @@ export default function ParentDashboard() {
 
               <div className="home-quick-grid">
                 <button className="home-quick-card" onClick={() => selectTab("announcements")}>
-                  <div className="home-quick-card-icon blue"><Bell size={17} /></div>
+                  <div className="home-quick-card-icon charcoal"><Bell size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">공지사항</div>
                     <div className="home-quick-card-sub">{unreadAnnouncements > 0 ? `안 읽은 공지 ${unreadAnnouncements}건` : "새 공지 없음"}</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setIsConsultModalOpen(true)}>
-                  <div className="home-quick-card-icon orange"><PhoneCall size={17} /></div>
+                  <div className="home-quick-card-icon rust"><PhoneCall size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">상담 신청</div>
                     <div className="home-quick-card-sub">원장님께 상담 요청</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setIsFeeModalOpen(true)}>
-                  <div className="home-quick-card-icon green"><CreditCard size={17} /></div>
+                  <div className="home-quick-card-icon rust-deep"><CreditCard size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">원비 확인</div>
                     <div className="home-quick-card-sub">납부 현황 확인하기</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => selectTab("community")}>
-                  <div className="home-quick-card-icon purple"><Users2 size={17} /></div>
+                  <div className="home-quick-card-icon charcoal-deep"><Users2 size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">커뮤니티</div>
                     <div className="home-quick-card-sub">학부모·원장님과 소통</div>
@@ -526,7 +526,7 @@ export default function ParentDashboard() {
                       </span>
                     )}
                     {student.status === "departed" && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'linear-gradient(135deg, #7A1229, #4C0916)', color: 'white', fontWeight: 700, fontSize: 13 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', color: 'white', fontWeight: 700, fontSize: 13 }}>
                         <CheckCircle size={14} /> 하원 완료
                       </span>
                     )}
@@ -699,7 +699,7 @@ export default function ParentDashboard() {
                         </span>
                       )}
                       {student.status === "departed" && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 999, background: 'linear-gradient(135deg, #7A1229, #4C0916)', color: 'white', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(128,0,32,0.3)' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 999, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', color: 'white', fontWeight: 700, fontSize: 15, boxShadow: '0 4px 14px rgba(148,58,31,0.3)' }}>
                           <CheckCircle size={18} /> 하원 완료
                         </span>
                       )}
@@ -976,8 +976,8 @@ export default function ParentDashboard() {
         <div className="modal-backdrop" onClick={() => setIsFeeModalOpen(false)}>
           <div className="modal-box modal-box-md" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-icon" style={{ background: '#EFF6FF' }}>
-                <CreditCard size={22} color="#1D4ED8" />
+              <div className="modal-icon" style={{ background: 'var(--brand-light)' }}>
+                <CreditCard size={22} color="var(--brand)" />
               </div>
               <div className="modal-title">수강료 납부 안내</div>
             </div>

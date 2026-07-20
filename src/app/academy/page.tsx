@@ -332,7 +332,7 @@ export default function AcademyDashboard() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -458,11 +458,11 @@ export default function AcademyDashboard() {
               <div className="stat-label"><Users size={13} /> 전체 원생</div>
               <div className="stat-value">{totalStudents}<span className="stat-unit">명</span></div>
             </div>
-            <div className="stat-card" style={{ borderTop: '3px solid #059669' }}>
+            <div className="stat-card" style={{ borderTop: '3px solid var(--success)' }}>
               <div className="stat-label" style={{ color: 'var(--success)' }}><UserCheck size={13} /> 등원 완료</div>
               <div className="stat-value" style={{ color: 'var(--success)' }}>{arrivedStudents}<span className="stat-unit">명</span></div>
             </div>
-            <div className="stat-card" style={{ borderTop: '3px solid #7A1229' }}>
+            <div className="stat-card" style={{ borderTop: '3px solid #943A1F' }}>
               <div className="stat-label" style={{ color: 'var(--brand)' }}><CheckCircle size={13} /> 하원 완료</div>
               <div className="stat-value" style={{ color: 'var(--brand)' }}>{departedStudents}<span className="stat-unit">명</span></div>
             </div>
@@ -482,28 +482,28 @@ export default function AcademyDashboard() {
 
               <div className="home-quick-grid">
                 <button className="home-quick-card" onClick={() => setActiveTab("consultations")}>
-                  <div className="home-quick-card-icon orange"><CalendarCheck size={17} /></div>
+                  <div className="home-quick-card-icon rust"><CalendarCheck size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">상담 신청</div>
                     <div className="home-quick-card-sub">{pendingConsults > 0 ? `대기중 ${pendingConsults}건` : "대기중인 신청 없음"}</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setActiveTab("approvals")}>
-                  <div className="home-quick-card-icon purple"><ShieldCheck size={17} /></div>
+                  <div className="home-quick-card-icon charcoal-deep"><ShieldCheck size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">가입 승인</div>
                     <div className="home-quick-card-sub">{pendingParents.length > 0 ? `대기중 ${pendingParents.length}건` : "대기중인 신청 없음"}</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setActiveTab("announcements")}>
-                  <div className="home-quick-card-icon blue"><Megaphone size={17} /></div>
+                  <div className="home-quick-card-icon charcoal"><Megaphone size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">공지사항</div>
                     <div className="home-quick-card-sub">등록 및 확인</div>
                   </div>
                 </button>
                 <button className="home-quick-card" onClick={() => setActiveTab("community")}>
-                  <div className="home-quick-card-icon green"><Users2 size={17} /></div>
+                  <div className="home-quick-card-icon rust-deep"><Users2 size={17} /></div>
                   <div>
                     <div className="home-quick-card-label">커뮤니티</div>
                     <div className="home-quick-card-sub">학부모와 소통</div>
@@ -829,7 +829,7 @@ export default function AcademyDashboard() {
                     <button
                       type="button"
                       onClick={handleAddTextbook}
-                      style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 32, height: 32, borderRadius: 8, background: '#7A1229', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}
+                      style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 32, height: 32, borderRadius: 8, background: '#943A1F', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}
                     >
                       <Plus size={16} />
                     </button>

@@ -189,7 +189,7 @@ export default function ChatPage() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <MessageSquare size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -406,7 +406,7 @@ export default function ChatPage() {
                               {!isMe && (
                                 <div style={{
                                   width: 32, height: 32, borderRadius: '50%',
-                                  background: 'linear-gradient(135deg, #7A1229, #4C0916)',
+                                  background: 'linear-gradient(135deg, #943A1F, #6E2A16)',
                                   display: isLast ? 'flex' : 'none',
                                   alignItems: 'center', justifyContent: 'center',
                                   color: 'white', fontSize: 12, fontWeight: 700, flexShrink: 0,
@@ -426,11 +426,11 @@ export default function ChatPage() {
                                     borderRadius: isMe
                                       ? `18px 18px ${isLast ? '4px' : '18px'} 18px`
                                       : `18px 18px 18px ${isLast ? '4px' : '18px'}`,
-                                    background: isMe ? 'linear-gradient(135deg, #7A1229, #4C0916)' : 'var(--surface)',
+                                    background: isMe ? 'linear-gradient(135deg, #943A1F, #6E2A16)' : 'var(--surface)',
                                     color: isMe ? 'white' : 'var(--text-primary)',
                                     fontSize: 14,
                                     lineHeight: 1.5,
-                                    boxShadow: isMe ? '0 2px 8px rgba(128,0,32,0.25)' : '0 1px 4px rgba(0,0,0,0.06)',
+                                    boxShadow: isMe ? '0 2px 8px rgba(148,58,31,0.25)' : '0 1px 4px rgba(0,0,0,0.06)',
                                     border: isMe ? 'none' : '1px solid var(--border)',
                                     wordBreak: 'break-word',
                                   }}>
@@ -464,7 +464,7 @@ export default function ChatPage() {
                           padding: '7px 14px',
                           borderRadius: 999,
                           background: 'var(--brand-light)',
-                          border: '1px solid rgba(128,0,32,0.15)',
+                          border: '1px solid rgba(148,58,31,0.15)',
                           color: 'var(--brand)',
                           fontSize: 13,
                           fontWeight: 600,
@@ -496,7 +496,7 @@ export default function ChatPage() {
                       style={{
                         width: 40, height: 40, borderRadius: 12, flexShrink: 0,
                         background: showQuickReplies ? 'var(--brand-light)' : 'var(--bg)',
-                        border: `1px solid ${showQuickReplies ? 'rgba(128,0,32,0.2)' : 'var(--border)'}`,
+                        border: `1px solid ${showQuickReplies ? 'rgba(148,58,31,0.2)' : 'var(--border)'}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         cursor: 'pointer', color: showQuickReplies ? 'var(--brand)' : 'var(--text-muted)',
                         transition: 'all 0.15s',
@@ -528,7 +528,7 @@ export default function ChatPage() {
                         }}
                         onFocus={e => {
                           e.target.style.borderColor = 'var(--brand)';
-                          e.target.style.boxShadow = '0 0 0 3px rgba(128,0,32,0.08)';
+                          e.target.style.boxShadow = '0 0 0 3px rgba(148,58,31,0.08)';
                         }}
                         onBlur={e => {
                           e.target.style.borderColor = 'var(--border)';
@@ -543,13 +543,13 @@ export default function ChatPage() {
                       disabled={!newMessage.trim()}
                       style={{
                         width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
-                        background: newMessage.trim() ? 'linear-gradient(135deg, #7A1229, #4C0916)' : 'var(--bg)',
+                        background: newMessage.trim() ? 'linear-gradient(135deg, #943A1F, #6E2A16)' : 'var(--bg)',
                         border: newMessage.trim() ? 'none' : '1px solid var(--border)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         cursor: newMessage.trim() ? 'pointer' : 'default',
                         color: newMessage.trim() ? 'white' : 'var(--text-muted)',
                         transition: 'all 0.2s',
-                        boxShadow: newMessage.trim() ? '0 4px 12px rgba(128,0,32,0.35)' : 'none',
+                        boxShadow: newMessage.trim() ? '0 4px 12px rgba(148,58,31,0.35)' : 'none',
                         transform: newMessage.trim() ? 'scale(1)' : 'scale(0.95)',
                       }}
                     >

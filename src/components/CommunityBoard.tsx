@@ -13,10 +13,10 @@ type CategoryId = "free" | "question" | "info" | "praise" | "suggest";
 
 const CATEGORIES: { id: CategoryId; label: string; badgeClass: string; chipClass: string }[] = [
   { id: "free", label: "자유", badgeClass: "badge-brand", chipClass: "brand" },
-  { id: "question", label: "질문", badgeClass: "badge-blue", chipClass: "blue" },
-  { id: "info", label: "정보공유", badgeClass: "badge-green", chipClass: "green" },
-  { id: "praise", label: "칭찬해요", badgeClass: "badge-purple", chipClass: "purple" },
-  { id: "suggest", label: "건의사항", badgeClass: "badge-orange", chipClass: "orange" },
+  { id: "question", label: "질문", badgeClass: "badge-charcoal", chipClass: "charcoal" },
+  { id: "info", label: "정보공유", badgeClass: "badge-rust-deep", chipClass: "rust-deep" },
+  { id: "praise", label: "칭찬해요", badgeClass: "badge-charcoal-deep", chipClass: "charcoal-deep" },
+  { id: "suggest", label: "건의사항", badgeClass: "badge-rust", chipClass: "rust" },
 ];
 
 const categoryMeta = (id?: string) => CATEGORIES.find(c => c.id === id) ?? CATEGORIES[0];

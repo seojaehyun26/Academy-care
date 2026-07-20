@@ -101,7 +101,7 @@ export default function Home() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div className="loading-logo" style={{ width: 52, height: 52, borderRadius: 16, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <GraduationCap size={28} color="white" />
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>로딩 중...</p>
@@ -147,7 +147,7 @@ export default function Home() {
         <div className="login-form-box">
           {/* Mobile logo */}
           <div className="login-form-logo-mobile">
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #7A1229, #4C0916)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #943A1F, #6E2A16)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <GraduationCap size={20} color="white" />
             </div>
             <span style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-primary)' }}>Academy Care</span>
