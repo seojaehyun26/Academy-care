@@ -1303,13 +1303,11 @@ img { display: block; max-width: 100%; }
 
 /* Announcement item */
 .announcement-item {
-  padding: 16px 18px;
-  border-radius: var(--r-lg);
-  background: var(--surface-2);
-  transition: background 0.15s;
+  padding: 16px 2px;
+  border-bottom: 1px solid var(--border);
 }
 
-.announcement-item + .announcement-item { margin-top: 10px; }
+.announcement-item:last-child { border-bottom: none; }
 
 .announcement-title {
   font-size: 14px;
